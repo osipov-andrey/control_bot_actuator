@@ -1,0 +1,11 @@
+NAME: <YOUR_NAME>
+VERBOSE_NAME: <YOUR_VERBOSE_NAME>
+DESCRIPTION: <YOUR_DESCRIPTION>
+SSE_URL: <YOUR_SSE_URL>
+
+rabbit: <YOUR_RABBIT_PARAMS>
+  host:
+  port:
+  login:
+  pwd:
+  queue:

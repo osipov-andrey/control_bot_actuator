@@ -1,0 +1,11 @@
+build
+dist
+
+*.egg*
+*.pyc
+*.log*
+*.gz
+*.exe
+*.spec
+*.yml
+.env
