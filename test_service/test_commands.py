@@ -3,7 +3,7 @@ import base64
 import random
 
 from cba.dispatcher import CommandsDispatcher
-from cba.commands import arguments
+from cba.commands import MessageTarget, arguments
 from cba.commands.base_commands import (
     BaseCommand, HumanCallableCommandWithArgs, ServiceCommand, hide, admin_only
 )
@@ -382,4 +382,16 @@ class InlineButtonForEdit(BaseCommand):
         await self.send_message(
             subject=f"Сим-Салябим",
             inline_edit_button=True,
+        )
+
+
+@dispatcher.register_callable_command
+class SendToChannel(BaseCommand):
+    """ Отправить в канал """
+    CMD = "channel"
+
+    async def _execute(self):
+        await self.send_message(
+            subject="Рассылка по каналу",
+            target=MessageTarget(target_type="channel", target_name="test")
         )
