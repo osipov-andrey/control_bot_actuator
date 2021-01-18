@@ -61,14 +61,14 @@ if __name__ == '__main__':
 Актуатор должен получать команды (от бота или из внешнего мира), выполнять бизнес-логику,
 и отправлять в бот сообщения с результатом работы.
 
-- Для получения команд используется [Consumer](https://github.com/osipov-andrey).
+- Для получения команд используется [Consumer](https://github.com/osipov-andrey/control_bot_actuator/blob/master/docs/CONSUMER.md).
 
-- Для отправки сообщений [Publisher](https://github.com/osipov-andrey).
+- Для отправки сообщений [Publisher](https://github.com/osipov-andrey/control_bot_actuator/blob/master/docs/PUBLISHERS.md).
 
 ## Описание команд
 
 Команда — ключевая сущность библиотеки. Именно в них описывается бизнес-логика.
-- Команды описываются в виде [классов](https://github.com/osipov-andrey). 
+- Команды описываются в виде [классов](https://github.com/osipov-andrey/control_bot_actuator/blob/master/docs/COMMANDS.md). 
 - Команды регистрируются и вызываются в модуле с помощью 
   [диспетчера](https://github.com/osipov-andrey).
   
