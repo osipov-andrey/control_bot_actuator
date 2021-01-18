@@ -68,12 +68,17 @@ class CommandsDispatcher:
         self.publishers = list()
 
     def set_publishers(self, publishers: Union[BasePublisher, List[BasePublisher]]):
+        """ Установить паблишеры. через которые будут отправляться сообщения """
         if isinstance(publishers, Iterable):
             self.publishers.extend(publishers)
         else:
             self.publishers.append(publishers)
 
     def introduce(self, client_info: ClientInfo):
+        """
+        Установить от какого имени будет работать диспетчер
+        и будут отправляться сообщения
+        """
         self.client_info = client_info
 
     async def events_reader(self, events_queue: asyncio.Queue):
