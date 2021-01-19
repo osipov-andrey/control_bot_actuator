@@ -30,8 +30,10 @@ class Arg(ABC):
         :param name: имя аргумента. Оно станет атрибутом экземпляра команды.
         :param description: описание аргумента.
         :param default: значение по-умолчанию
-        :param example: пример значений.
-        :param options: варианты для выбора.
+        :param example: пример значений. Подставляется в описание аргумента.
+        :param options: варианты для выбора. Отобразятся кнопками под сообщением в телеграм боте.
+        :param allowed: допустимые варианты для валидации на стороне телеграм-бота.
+        :param allow_options: сделать допустимыми те, что перечислены в options.
         """
 
         self.default = default
@@ -79,6 +81,10 @@ class Integer(Arg):
     BOT_ARG_TYPE = "integer"
 
     def __init__(self, *args, minimum=None, maximum=None, **kwargs):
+        """
+        :param minimum: минимальное значение аргумента.
+        :param maximum: максимальное значение аргумента.
+        """
         super().__init__(*args, **kwargs)
         self.minimum = minimum
         self.maximum = maximum
@@ -98,6 +104,9 @@ class String(Arg):
     BOT_ARG_TYPE = "string"
 
     def __init__(self, *args, regex=None, **kwargs):
+        """
+        :param regex: Регулярное выражение, которому должно соответствовать значение аргумента
+        """
         super().__init__(*args, **kwargs)
         self.regex = regex
 
