@@ -122,7 +122,7 @@ class TestServiceCommand(ServiceCommand):
     CMD = 'Service'
 
     async def _execute(self):
-        await self.send_message(
+        await self.(
             text="Вызвана сервисная команда!",
         )
 
@@ -138,3 +138,45 @@ class TestCallableCommandWithCallingServiceCommand(BaseCommand):
 
 
 ```
+
+## Отправка сообщений в телеграм из команд
+Для отправки сообщений используйте метод `send_message`.
+
+Метод принимает следующие keyword-параметры:
+
+- subject - Заголовок сообщения
+- text - Текст сообщения
+- target - "Адресат" сообщения. Экземпляр класса `Messagetarget`. 
+  По-умолчанию сообщение отправится пользователю, вызвавшему команду.
+- images - Список с изображениями (Base64-string).
+- document - Текстовый документ в виде словаря следующего содержания:
+  
+            {
+                "content": Str (Содержимое документа),
+                "filename": Str (Имя файла)
+                "caption":  Str (Описание файла)
+            }
+
+- issue - уведомление о проблеме. Экземпляр класса `Issue`.
+- replies - Список текстовых сообщений, 
+  которые выведутся в телеграм боте как ответы на основное.
+- buttons - inline-keyboard под сообщением.
+
+### Создание inline-keyboard:
+```python
+class CmdWithInline(BaseCommand):
+    """ Команда с inline-кнопкой """
+    CMD = 'InlineButtons'
+
+    async def _execute(self):
+        self.add_inline_button(
+            InlineButtonForEdit, "Press me"
+        )
+        await self.send_message(
+            subject="Сообщение с Inline-keyboard",
+            buttons=self.inline_buttons,
+        )
+```
+
+Метод `add_inline_button` первым аргументом принимает класс команды, 
+которая будет вызываться при нажатии кнопки. Вторым — надпись на кнопке.
