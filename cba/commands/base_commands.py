@@ -23,7 +23,7 @@ import logging
 import uuid
 
 from abc import ABC, abstractmethod
-from typing import Iterable, List, Tuple, Type, Optional, Union
+from typing import List, Tuple, Type, Optional
 
 from cba import exceptions
 from cba.commands.commands_tools import load_json_template
@@ -81,8 +81,9 @@ class BaseCommand(ABC):
             *args,
             target: MessageTarget,
             client_info: ClientInfo,
-            publishers: Union[BasePublisher, List[BasePublisher]],
-            parent_id=None,
+            publishers: List[BasePublisher],
+            parent_id: Optional[str] = None,
+            command_args: Optional[dict] = None,
             **kwargs
     ):
         """
@@ -97,6 +98,7 @@ class BaseCommand(ABC):
         self.publishers = publishers
         self.id = self._generate_id()
         self.parent_id = parent_id
+        self.command_args = command_args
         log_marker = f"{'='*20} {client_info.name} {'='*20}"
         logger.info(
             "\n%s\nCreated command-instance [%s]\n"
@@ -108,10 +110,10 @@ class BaseCommand(ABC):
             self,
             cmd_type: Type['BaseCommand'],
             *args,
-            target: MessageTarget = None,
-            client_info: ClientInfo = None,
-            publishers: Union[BasePublisher, List[BasePublisher]] = None,
-            command_args: dict = None,
+            target: Optional[MessageTarget] = None,
+            client_info: Optional[ClientInfo] = None,
+            publishers: Optional[List[BasePublisher]] = None,
+            command_args: Optional[dict] = None,
             **kwargs
     ) -> 'BaseCommand':
 

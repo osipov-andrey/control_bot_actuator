@@ -17,7 +17,7 @@ MessageTarget = namedtuple(
 class Issue:
     def __init__(self, id_: str, status: str, prefix: str = ""):
         self.id_ = self._add_prefix(id_, prefix)
-        self.status = self._is_resolved(status)
+        self.resolved = self._is_resolved(status)
 
     @staticmethod
     def _add_prefix(issue_id: str, prefix: str):
@@ -140,7 +140,7 @@ class TelegramMessage:
         if self._issue:
             payload['issue'] = {
                 "issue_id": self._issue.id_,
-                "resolved": self._issue.status,
+                "resolved": self._issue.resolved,
             }
 
         if self._buttons:

@@ -2,7 +2,7 @@ import logging
 import yaml
 
 from cba import Actuator
-from cba.publishers import HTTPPublisher, RabbitPublisher
+from cba.publishers import HTTPPublisher
 from cba.consumers import SSEConsumer
 
 import test_commands

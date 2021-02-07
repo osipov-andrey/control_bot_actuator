@@ -68,17 +68,12 @@ class CommandsDispatcher:
         self.publishers = list()
 
     def set_publishers(self, publishers: Union[BasePublisher, List[BasePublisher]]):
-        """ Установить паблишеры. через которые будут отправляться сообщения """
         if isinstance(publishers, Iterable):
             self.publishers.extend(publishers)
         else:
             self.publishers.append(publishers)
 
     def introduce(self, client_info: ClientInfo):
-        """
-        Установить от какого имени будет работать диспетчер
-        и будут отправляться сообщения
-        """
         self.client_info = client_info
 
     async def events_reader(self, events_queue: asyncio.Queue):
@@ -117,21 +112,9 @@ class CommandsDispatcher:
             cmd_kwargs["commands_"] = self.callable_commands
 
         try:
-            all_commands = self.callable_commands + self.service_commands
-            cmd_type = list(filter(lambda x: x.CMD == command, all_commands))[0]
-            if event.behavior == Behaviors.ADMIN.value:
-                cmd_type = cmd_type.behavior__admin
-            cmd = cmd_type(**cmd_kwargs)
-            if cmd.ARGS:
-                cmd = cmd.validate()
+            cmd = self._get_command(command, event.behavior, **cmd_kwargs)
             return await cmd.execute()
-        except IndexError:
-            _LOGGER.warning("Get wrong command!", exc_info=True)
-            return await commands.WrongCommand(**cmd_kwargs).execute()
-        except exceptions.NotEnoughArgumentsError as err:
-            # Переданы не все обязательные аргументы
-            _LOGGER.warning("Not enough arguments!", exc_info=True)
-            return await commands.NotEnoughArguments(err.missing_args, **cmd_kwargs).execute()
+        # Что ниже - убивает приложение
         except exceptions.BadCommandTemplateException as err:
             # Загрузка шаблонов происходит и до вызова метода execute() у команд
             await commands.BadJSONTemplateCommand(
@@ -141,6 +124,29 @@ class CommandsDispatcher:
         except BaseException as err:
             await commands.InternalError(err, **cmd_kwargs).execute()
             raise
+
+    def _get_command(self, command: str, behavior: str, **kwargs) -> BaseCommand:
+        all_commands = self.callable_commands + self.service_commands
+        try:
+            cmd_type = list(filter(lambda x: x.CMD == command, all_commands))[0]
+        except IndexError:
+            _LOGGER.warning("Get wrong command!", exc_info=True)
+            return commands.WrongCommand(**kwargs)
+
+        if behavior == Behaviors.ADMIN.value:
+            cmd_type = cmd_type.behavior__admin
+
+        try:
+            cmd = cmd_type(**kwargs)
+        except exceptions.NotEnoughArgumentsError as err:
+            # Переданы не все обязательные аргументы
+            _LOGGER.warning("Not enough arguments!", exc_info=True)
+            return commands.NotEnoughArguments(err.missing_args, **kwargs)
+
+        if cmd.ARGS:
+            cmd = cmd.validate()
+
+        return cmd
 
 
 @hide

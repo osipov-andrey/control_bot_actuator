@@ -35,6 +35,10 @@ setup(
     ],
     extras_require={
         'dev': [
+            'pydantic==1.7.3',
+            'pytest==6.2.2',
+            'pytest-asyncio==0.14.0',
+            'pytest-mock==3.5.1',
         ],
     },
     packages=find_packages(exclude=['tests']),
