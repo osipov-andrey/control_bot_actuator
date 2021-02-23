@@ -2,14 +2,6 @@ from abc import ABC, abstractmethod
 from typing import Optional, List, Union
 
 
-__all__ = [
-    'String',
-    'Integer',
-    'ListArg',
-    'MyUser',
-]
-
-
 class Arg(ABC):
     """ Определяет один аргумент команды """
     BOT_ARG_TYPE: str
@@ -132,4 +124,40 @@ class MyUser(Integer):
     def _create_schema(self) -> dict:
         schema = super(MyUser, self)._create_schema()
         schema["is_client"] = True
+        return schema
+
+
+class Actuator(String):
+    """ Актуатор бота """
+
+    def _create_schema(self) -> dict:
+        schema = super()._create_schema()
+        schema["is_actuator"] = True
+        return schema
+
+
+class Granter(MyUser):
+    """ ID пользователя с правами на актуатор """
+
+    def _create_schema(self) -> dict:
+        schema = super()._create_schema()
+        schema["is_granter"] = True
+        return schema
+
+
+class Channel(String):
+    """ Канал бота """
+
+    def _create_schema(self) -> dict:
+        schema = super()._create_schema()
+        schema["is_channel"] = True
+        return schema
+
+
+class Subscriber(MyUser):
+    """ Подписчик канала """
+
+    def _create_schema(self) -> dict:
+        schema = super()._create_schema()
+        schema["is_subscriber"] = True
         return schema
