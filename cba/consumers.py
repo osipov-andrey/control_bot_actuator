@@ -84,6 +84,7 @@ class SSEConsumer:
                 async with httpx.AsyncClient() as client:
                     async with client.stream(method='GET', url=self.url,
                                              timeout=35) as stream:  # heartbeat every 30s
+                        stream.raise_for_status()
                         _LOGGER.info("Connected to SSE on %s", self.url)
 
                         async for message in stream.aiter_text():
