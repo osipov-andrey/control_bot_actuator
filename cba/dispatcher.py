@@ -4,7 +4,7 @@ from enum import Enum
 from typing import Iterable, List, Type, Union
 
 from cba import commands, exceptions
-from cba.commands import BaseCommand, hide
+from cba.commands import BaseCommand, hide, HumanCallableCommandWithArgs
 from cba.messages import MessageTarget
 from cba.publishers import BasePublisher
 from cba.helpers import ClientInfo
@@ -182,10 +182,9 @@ class Introduce(commands.BaseCommand):
             description["behavior__user"] = self._get_cmd_behavior(cmd)
         return description
 
-    def _get_cmd_behavior(self, cmd: Type['BaseCommand']) -> dict:
-        # noinspection PyUnresolvedReferences
+    def _get_cmd_behavior(self, cmd: Type[Union['BaseCommand', 'HumanCallableCommandWithArgs']]) -> dict:
         return {
-                'args': cmd.args_description() if cmd.ARGS else {},
+                'args': cmd.args_description() if issubclass(cmd, HumanCallableCommandWithArgs) else {},
                 'description': commands.parse_and_paste_emoji(
                     cmd.description(self.client_info.name)
                 ),
