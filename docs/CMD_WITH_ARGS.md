@@ -1,18 +1,18 @@
-## Команды с аргументами
+## Commands with arguments
 
-Чтобы создать команду с аргументами отнаследуйтесь от соответствующего класса 
-и определите аргумент `ARGS` класса вашей команды в виде кортежа с аргументами:
+To create a command with arguments, inherit from the corresponding class
+and define the argument `ARGS` for your command class as a tuple of arguments:
 
 ```python
 from cba.commands import HumanCallableCommandWithArgs, arguments
 
 
 class CommandWithArgs(HumanCallableCommandWithArgs):
-    """ Команда с аргументами """
-    CMD = 'CmdWithArgs'
+    """ Command with arguments """
+    CMD = "CmdWithArgs"
     ARGS = (
-        arguments.Integer('arg1', 'Аргумент из чисел', example='123'),
-        arguments.String('arg2', 'Аргумент из букв', example='abc'),
+        arguments.Integer("arg1", "Argument with words", example="123"),
+        arguments.String("arg2", "Argument with digits", example="abc"),
     )
 
     async def _execute(self):
@@ -21,63 +21,58 @@ class CommandWithArgs(HumanCallableCommandWithArgs):
         )
 ```
 
-После инстанцирования через диспетчер экземпляр команды 
-будет иметь одноименные с аргументами атрибуты со значениями, 
-введенными пользователем в телеграм боте.
 
-### Аргументы
+### Arguments
 
-Библиотека поддерживает 4 типа аргументов:
+The library supports 4 types of arguments:
 
-- `arguments.String` - любое строковое значение;
+- `arguments.String` - any string value;
 
-- `arguments.Integer`- целочисленной значение;
+- `arguments.Integer`- integer value;
 
-- `arguments.ListArg` - список любых значений;
+- `arguments.ListArg` - list of any values;
 
-- `arguments.MyUser` - пользователь, имеющий доступ к актутатору в телеграм боте.
+- `arguments.MyUser` - user who has grant to the actuator in the telegram bot.
 
-`arguments.Arg` - базовый класс, от которого наследуются все аргументы.
+`arguments.Arg` - base class from which all arguments inherit.
 
-#### Параметры, поддерживаемые всеми аргументами:
+#### Parameters supported by all arguments:
 
-- `name` - имя аргумента. Оно станет атрибутом экземпляра команды.
-- `description` - описание аргумента.
-- `default` - значение по-умолчанию
-- `example` - пример значений. Подставляется в описание аргумента.
-- `options` - варианты для выбора. Отобразятся кнопками под сообщением в телеграм боте.
-- `allowed` - допустимые варианты для валидации на стороне телеграм-бота.
-- `allow_options` - сделать допустимыми те, что перечислены в options.
+- `name` - the name of the argument. It will become an attribute of the command instance.
+- `description` - description of the argument.
+- `default` - default value.
+- `example` - example values. Substituted into the argument description.
+- `options` - options to choose from. Displayed by buttons under the message in the telegram bot.
+- `allowed` - acceptable options (for validation on the telegram bot side).
+- `allow_options` - make allowed the ones specified in the options.
 
-#### Дополнительные параметры `arguments.String`:
+#### Extra options `arguments.String`:
 
-- `regex` - Регулярное выражение, которому должно соответствовать значение аргумента.
+- `regex` - Regular expression that the argument value must match (for validation on the telegram bot side).
 
-#### Дополнительные параметры `arguments.Integer`:
+#### Extra options `arguments.Integer`:
 
-- `minimum` - минимальное значение аргумента.
-- `maximum` - максимальное значение аргумента.
+- `minimum` - the minimum value of the argument.
+- `maximum` - the maximum value of the argument.
 
-### Валидация
+### Validation
 
-Валидация ограничений, указанных в параметрах аргументов, 
-а так же аргумента типа `arguments.MyUser` происходит на стороне телеграм бота.
-Указанные ограничения передаются в бот в виде схемы из библиотеки 
+Validation according to the specified parameters occurs on the side of the telegram bot.
+The specified restrictions are transferred to the bot in the form of a scheme from the library
 [Cerberus](https://github.com/pyeve/cerberus).
 
-Вы можете определить дополнительно валидацию на стороне актуатора переопределив 
-метод `_validate`:
+You can define additional validation on the actuator side by overriding `_validate` method:
 
 ```python
 from cba.commands import HumanCallableCommandWithArgs, arguments
 
 
 class CommandWithArgs(HumanCallableCommandWithArgs):
-    """ Команда с аргументами """
-    CMD = 'CmdWithArgs'
+    """ Command with arguments """
+    CMD = "CmdWithArgs"
     ARGS = (
-        arguments.Integer('arg1', 'Аргумент из чисел', example='123'),
-        arguments.String('arg2', 'Аргумент из букв', example='abc'),
+        arguments.Integer("arg1", "Argument with words", example="123"),
+        arguments.String("arg2", "Argument with digits", example="abc"),
     )
 
     async def _execute(self):
