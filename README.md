@@ -1,8 +1,8 @@
 # Control bot actuator (cba)
 
-Библиотека для создания модулей-актуаторов для [Control bot](https://github.com/osipov-andrey/control_bot).
+Library for creating actuator modules for [Control bot](https://github.com/osipov-andrey/control_bot).
 
-Пример простого актуатора:
+Example of a simple actuator:
 
 ```python
 from cba import Actuator
@@ -47,32 +47,31 @@ if __name__ == '__main__':
 
 ```
 
-и в боте получаем следующую логику _(Должна быть еще регистрация модуля в боте и 
-предоставление прав пользователю - в разработке)_:
+and in the bot we get the following logic:
 
 
 
 ![Alt-текст](https://github.com/osipov-andrey/control_bot_actuator/blob/master/docs/telegram_echo.png?raw=true "Echo dialog")
 
-# Документация
+# Documentation
 
-## Подготовка окружения
+## Preparing the environment
 
-Актуатор должен получать команды (от бота или из внешнего мира), выполнять бизнес-логику,
-и отправлять в бот сообщения с результатом работы.
+The actuator must receive commands (from the bot or from the outside world), execute business logic,
+and send messages to the bot with the result of the work.
 
-- Для получения команд используется [Consumer](https://github.com/osipov-andrey/control_bot_actuator/blob/master/docs/CONSUMER.md).
+- To receive commands, use[Consumer](https://github.com/osipov-andrey/control_bot_actuator/blob/master/docs/CONSUMER.md).
 
-- Для отправки сообщений [Publisher](https://github.com/osipov-andrey/control_bot_actuator/blob/master/docs/PUBLISHERS.md).
+- To send messages [Publisher](https://github.com/osipov-andrey/control_bot_actuator/blob/master/docs/PUBLISHERS.md).
 
-## Описание команд
+## Command description
 
-Команда — ключевая сущность библиотеки. Именно в них описывается бизнес-логика.
-- Команды описываются в виде [классов](https://github.com/osipov-andrey/control_bot_actuator/blob/master/docs/COMMANDS.md). 
+Commands are the core of the library. It is in them that the business logic is described.
+- Commands are described as [classes](https://github.com/osipov-andrey/control_bot_actuator/blob/master/docs/COMMANDS.md). 
 
 
-## Запуск актуатора
+## Starting the actuator
 
-Для работы актуатора необходимо запустить в связке _Consumer, Publisher, Dispatcher_.
-Это можно сделать вручную, используя соответствующие методы каждого класса.
-Или можно воспользоваться специальным агрегирующим классом _Actuator_ (см. пример выше).
+For the actuator to work, the following objects must be launched in conjunction: _Consumer, Publisher, Dispatcher_.
+This can be done manually using the appropriate methods for each class.
+Or you can use the special aggregate class _Actuator_ (see example above).
