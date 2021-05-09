@@ -1,52 +1,57 @@
-## Описание команд
+## Commands description
 
-### Команда без аргументов
-Вызывается из телеграм бота 1 нажатием
+### Command with no arguments
+Called from telegram bot 1 by pressing
 
 ```python
 from cba.commands import BaseCommand
 
 class CallableCommand(BaseCommand):
-    """ Вызываемая команда без аргументов """
+    """ Callable command with no arguments """
     CMD = 'CallingServiceCommand'
 
     async def _execute(self):
         await self.send_message(
-            text="Вызвана команда без аргументов!",
+            text="Command with no arguments called!",
         )
 ```
 
-- Строка документации и аргумент `CMD` обязательны к заполнению!
-Они используются для создания пунктов меню в телеграм боте
+- The docstring and the `CMD` argument are required!
+They are used to creating menu items in a telegram bot.
   
-- метод _send_message_ по-умолчанию отправит сообщение тому 
-  пользователю, который вызвал команду в телеграм-боте.
 
-### Команда с аргументами
-При вызове из телеграм бота требуется дополнительно ввод аргументов.
+    ⚠️ WARNING!! Do not use snake_case or kebab-case! 
+    This will break the command syntax in telegram.
+    The same goes for argument names.
+  
+  
+- The _send_message_ method will by default send a message 
+  to the user who called the command in the telegram bot.
 
-Подробнее о [командах с аргументами.](https://github.com/osipov-andrey/control_bot_actuator/blob/master/docs/CMD_WITH_ARGS.md)
+### Command with arguments
+When calling from a telegram bot, additional input of arguments is required.
 
-## Регистрация команд
+Learn more about [Commands with arguments.](https://github.com/osipov-andrey/control_bot_actuator/blob/master/docs/CMD_WITH_ARGS.md)
 
-Создаем диспетчер:
+## Registering commands
+
+Create a dispatcher:
 ```python
 from cba.dispatcher import CommandsDispatcher
 
 dispatcher = CommandsDispatcher()
 ```
 
-### Вызываемая пользователем команда
-Может быть вызвана из телеграм бота
+### User-called command
+Can be called from the telegram bot
 
 ```python
 @dispatcher.register_callable_command
 class CallableCommand(BaseCommand):
     ...
 ```
-### Служебная команда
-Может быть вызвана через диспетчер изнутри 
-актуатора, но не из телеграм бота
+### Service command
+Can be called from within the dispatcher, but not from the telegram bot
 
 ```python
 @dispatcher.register_service_command
@@ -54,9 +59,9 @@ class CallableCommand(BaseCommand):
     ...
 ```
 
-### Скрытая команда
-Может быть вызвана из телеграм бота, но в меню не отображается
-(может быть использована в инлайн-кнопках, например)
+### Hidden command
+Can be called from the telegram bot, but is not displayed in the menu
+(can be used in inline button callbacks like)
 
 ```python
 from cba.commands import hide
@@ -67,12 +72,12 @@ class CallableCommand(BaseCommand):
     ...
 ```
 
-## Разграничение доступа
-По-умолчанию команда имеет одинаковый workflow для администратора бота и обычного пользователя.
+## Access control
+By default, the command has the same workflow for the bot administrator and the regular user.
 
-Поведение команды можно дополнительно настроить следующим образом:
+Command behavior can be further customized as follows:
 
-### Admin-only команда
+### Admin-only command
 
 ```python
 from cba.commands import admin_only
@@ -83,53 +88,53 @@ class CallableCommand(BaseCommand):
     ...
 ```
 
-### Отдельный workflow для администратора
-Для этого создадим новую команду, и зарегистрируем ее как админское поведение для имеющейся:
+### Separate workflow for admin
+To do this, create a new command, and register it as admin behavior for the existing one:
 
 ```python
 from cba.commands import BaseCommand, HumanCallableCommandWithArgs, arguments
 
 @dispatcher.register_callable_command
 class TestDifferentBehavior(BaseCommand):
-    """ Пользовательская команда """
+    """ Command for regular user """
     CMD = "behavior"
 
     async def _execute(self):
         await self.send_message(
-            subject="Вы пользователь",
+            subject="You are a user",
         )
 
 
 @TestDifferentBehavior.admin_behavior
 class TestDifferentBehaviorAdmin(HumanCallableCommandWithArgs):
-    """ Админское поведение пользовательской команды """
+    """ Admin behaviour for user command """
     ARGS = (
-        arguments.String("adminArg", "админский аргумент"),
+        arguments.String("adminArg", "admin argument"),
     )
 
     async def _execute(self):
         await self.send_message(
-            subject=f"Вы админ. Ваш аргумент: {self.adminArg}",
+            subject=f"You are a admin. Your argument: {self.adminArg}",
         )
 ```
 
-## Вызов одной команды из другой
+## Calling one command from another
 ```python
 from cba.commands import ServiceCommand, BaseCommand
 
 class TestServiceCommand(ServiceCommand):
-    """ Команда, вызываемая из другой команды """
+    """ Command called from another command """
     CMD = 'Service'
 
     async def _execute(self):
-        await self.(
-            text="Вызвана сервисная команда!",
+        await self.send_message(
+            text="Service command called!",
         )
 
 
 @dispatcher.register_callable_command
 class TestCallableCommandWithCallingServiceCommand(BaseCommand):
-    """ Вызываемая команда, в ходе выполнения которой вызовется сервисная команда """
+    """ Called command, during the execution of which the service command will be called """
     CMD = 'CallingServiceCommand'
 
     async def _execute(self):
@@ -139,33 +144,33 @@ class TestCallableCommandWithCallingServiceCommand(BaseCommand):
 
 ```
 
-## Отправка сообщений в телеграм из команд
-Для отправки сообщений используйте метод `send_message`.
+## Sending messages to telegram from commands
+To send messages use the `send_message` method.
 
-Метод принимает следующие keyword-параметры:
+The method accepts the following keyword parameters:
 
-- subject - Заголовок сообщения
-- text - Текст сообщения
-- target - "Адресат" сообщения. Экземпляр класса `Messagetarget`. 
-  По-умолчанию сообщение отправится пользователю, вызвавшему команду.
-- images - Список с изображениями (Base64-string).
-- document - Текстовый документ в виде словаря следующего содержания:
+- subject - the headline of the message
+- text - main text of the message
+- target - the "addressee" of the message. Instance of the `Messagetarget` class. 
+  By default, the message will be sent to the user who called the command.
+- images - List with images (Base64-string).
+- document - A text document in the form of a python-dict with the following content:
   
             {
-                "content": Str (Содержимое документа),
-                "filename": Str (Имя файла)
-                "caption":  Str (Описание файла)
+                "content": Str (Content of the document - text),
+                "filename": Str (File name)
+                "caption":  Str (File description in message with file)
             }
 
-- issue - уведомление о проблеме. Экземпляр класса `Issue`.
-- replies - Список текстовых сообщений, 
-  которые выведутся в телеграм боте как ответы на основное.
-- buttons - inline-keyboard под сообщением.
+- issue - problem notification. Instance of the `Issue` class.
+- replies - List of text messages that will be displayed 
+  in the telegram bot as replies to the main one.
+- buttons - inline-keyboard.
 
-### Создание inline-keyboard:
+### Creating an inline-keyboard:
 ```python
 class CmdWithInline(BaseCommand):
-    """ Команда с inline-кнопкой """
+    """ Command with inline-button """
     CMD = 'InlineButtons'
 
     async def _execute(self):
@@ -173,10 +178,10 @@ class CmdWithInline(BaseCommand):
             InlineButtonForEdit, "Press me"
         )
         await self.send_message(
-            subject="Сообщение с Inline-keyboard",
+            subject="Message with Inline-keyboard",
             buttons=self.inline_buttons,
         )
 ```
 
-Метод `add_inline_button` первым аргументом принимает класс команды, 
-которая будет вызываться при нажатии кнопки. Вторым — надпись на кнопке.
+The `add_inline_button` method takes as the first argument the class of the command 
+that will be called when the button is pressed. The second is the inscription on the button.
