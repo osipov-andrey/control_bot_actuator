@@ -1,16 +1,17 @@
 ## class BasePublisher(ABC), class HTTPPublisher(BasePublisher), class RabbitPublisher(BasePublisher)
 
-Паблишеры отвечают за отправку сообщений в телеграм-бот.
+Publishers are responsible for sending messages to the control bot.
 
-Абстрактный класс _BasePublisher(ABC)_ определяет абстрактный метод
-_publish_message_, который получает в качестве первого аргумента экземпляр класса 
-_TelegramMessage_.
+The abstract class _BasePublisher(ABC)_ defines an abstract 
+method _publish_message_ that receives an instance of 
+the _TelegramMessage_ class as its first argument.
 
-Паблишеры ничего не знаю о содержании и адресате сообщения(какой чат, какой пользователь и т.п.).
-Они только отправляют сообщение в телеграм-бот по тому или иному каналу.
+Publishers do not know anything about the content and recipient 
+of the message (which chat, which user, etc.).
+They only send a message to the control bot over one channel or another.
 
 
-Инициализация:
+Initialization:
 
 ```python
 from cba.publishers import HTTPPublisher, RabbitPublisher
