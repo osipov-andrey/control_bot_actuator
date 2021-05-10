@@ -1,29 +1,31 @@
 """
 Control-bot actuator (CBA)
-Каркас для создания командных интерфейсов для телеграм-ботов
+Framework for creating command interfaces for control bot
 """
 
 from setuptools import find_packages, setup
 
 
-module_name = 'cba'
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
+
+
+MODULE_NAME = 'cba'
 
 setup(
-    name=module_name,
-    version='0.0.1',
+    name=MODULE_NAME,
+    version='1.0.1',
     author='Andrey Osipov',
     author_email='developer.osipov@gmail.com',
-    description=__file__.__doc__,
-    url='',
+    description="Framework for creating command interfaces for control bot",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url='https://github.com/osipov-andrey/control_bot_actuator',
     platforms='all',
     classifiers=[
-        'Intended Audience :: Developers',
-        'Natural Language :: Russian',
-        'Operating System :: Win10',
-        'Operating System :: Linux',
-        'Programming Language :: Python',
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: Implementation :: CPython'
     ],
     python_requires='>=3.7',
@@ -41,7 +43,8 @@ setup(
             'pytest-mock==3.5.1',
         ],
     },
-    packages=find_packages(exclude=['tests']),
+    package_dir={"": "src"},
+    packages=find_packages(where="src", exclude=['tests']),
 
     include_package_data=True
 )

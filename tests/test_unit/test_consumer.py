@@ -81,7 +81,7 @@ class TestSseEventParser:
 
 
 class TestSseConsumer:
-    # TODO: Эту штуку надо интеграционными тестами
+
     test_event = 'event: slave\r\n' \
                  'data: {"command": "HumanCallableArgs", ' \
                  '"target": {"target_type": "user", "target_name": "172698654"}, ' \
