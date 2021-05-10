@@ -3,12 +3,9 @@ import re
 from bs4 import BeautifulSoup as bs
 
 
-__all__ = [
-    'build_message',
-    'parse_and_paste_emoji'
-]
-HTML_TAG_PATTERN = re.compile(r'(<\/*([\w@.]+)[^>]*>)')
-VALID_HTML_TAGS = ('a', 'b', 'i', 'code', 'pre')
+__all__ = ["build_message", "parse_and_paste_emoji"]
+HTML_TAG_PATTERN = re.compile(r"(<\/*([\w@.]+)[^>]*>)")
+VALID_HTML_TAGS = ("a", "b", "i", "code", "pre")
 
 
 def build_message(subject: str, message: str, client_name: str):
@@ -16,21 +13,21 @@ def build_message(subject: str, message: str, client_name: str):
     Собирает сообщение для отправки в телеграм.
     """
     message_subject = _build_message_subject(subject, client_name)
-    message = f'{message_subject}{message}'
+    message = f"{message_subject}{message}"
     message = parse_and_paste_emoji(message)
     message = _clear_html(message)
     return message
 
 
 def parse_and_paste_emoji(text: str):
-    """ Подставляет emoji """
-    pattern = re.compile(r'>>(\w+)<<')
+    """Подставляет emoji"""
+    pattern = re.compile(r">>(\w+)<<")
     text = re.sub(pattern, lambda x: emoji_map[x.group(1)], text)
     return text
 
 
 def _build_message_subject(subject: str, client_name: str) -> str:
-    """ Подготавливает заголовок сообщения """
+    """Подготавливает заголовок сообщения"""
     if client_name:
         client_name += "\n"
     if subject:
@@ -40,15 +37,15 @@ def _build_message_subject(subject: str, client_name: str) -> str:
 
 
 def _clear_html(message: str) -> str:
-    """ Удаляет невалидные HTML-тэги """
-    html_text = str(bs(message, 'html.parser'))  # для экранирования одиночных HTML-символов
+    """Удаляет невалидные HTML-тэги"""
+    html_text = str(bs(message, "html.parser"))  # для экранирования одиночных HTML-символов
     html_text = re.sub(HTML_TAG_PATTERN, _check_tag, html_text)
     return html_text
 
 
 def _check_tag(match_object) -> str:
     if match_object.group(2).strip().lower() not in VALID_HTML_TAGS:
-        return ''
+        return ""
     else:
         return match_object.group(1)
 
@@ -69,7 +66,7 @@ emoji_map = {
     "fire": "🔥",
     "hankey": "💩",
     "nailed": "📌",
-    "0": "⬜",   # white
+    "0": "⬜",  # white
     "1": "🟦",  # blue
     "2": "🟩",  # green
     "3": "🟨",  # yellow

@@ -9,12 +9,9 @@ from cba.dispatcher import BaseDispatcherEvent
 from cba.messages import MessageTarget
 
 
-__all__ = [
-    'SSEConsumer',
-    'SSEEventParser'
-]
+__all__ = ["SSEConsumer", "SSEEventParser"]
 
-_LOGGER = logging.getLogger('SSE Consumer')
+_LOGGER = logging.getLogger("SSE Consumer")
 
 
 class SSEEventParser:
@@ -65,12 +62,13 @@ class SSEConsumer:
     Клиент SSE.
     Вызывает команды обратной связи.
     """
+
     def __init__(self, sse_url: str):
         self.url = sse_url
 
     @staticmethod
     async def callback(command: str, queue: Queue):
-        """ Парсит эвент и кладет в очерель в случае успеха """
+        """Парсит эвент и кладет в очерель в случае успеха"""
         raw_event = SSEEventParser(command)
 
         if raw_event.event in ("start", "slave"):
@@ -82,8 +80,9 @@ class SSEConsumer:
         while 1:
             try:
                 async with httpx.AsyncClient() as client:
-                    async with client.stream(method='GET', url=self.url,
-                                             timeout=35) as stream:  # heartbeat every 30s
+                    async with client.stream(
+                        method="GET", url=self.url, timeout=35
+                    ) as stream:  # heartbeat every 30s
                         _LOGGER.info("Connected to SSE on %s", self.url)
 
                         async for message in stream.aiter_text():
@@ -99,4 +98,4 @@ class SSEConsumer:
             except httpx.TimeoutException:
                 _LOGGER.warning("Heartbeat waiting timeout!")
             finally:
-                _LOGGER.info('Reconnecting...')
+                _LOGGER.info("Reconnecting...")

@@ -5,7 +5,7 @@ SENDER_NAME = "name"
 
 
 class TestIssue:
-    RESOLVED = 'RESOLVED'
+    RESOLVED = "RESOLVED"
 
     def test_add_prefix(self):
         issue = Issue("id1", "PROBLEM", prefix="test_")
@@ -19,17 +19,10 @@ class TestIssue:
 
 
 def get_message(*, target=MessageTarget("user", "user_id", "123"), **kwargs):
-    return TelegramMessage(
-        _id="123",
-        cmd="cmd",
-        sender_name=SENDER_NAME,
-        target=target,
-        **kwargs
-    )
+    return TelegramMessage(_id="123", cmd="cmd", sender_name=SENDER_NAME, target=target, **kwargs)
 
 
 class TestMessage:
-
     def test_build_message(self):
         expected_result = f"<i><b>{SENDER_NAME}\nlol\n</b></i>kek"
         message = get_message(text="kek", subject="lol")
@@ -47,7 +40,9 @@ class TestMessage:
         assert message.payload["replies"] == [{"image": image} for image in images]
 
     def test_one_image(self):
-        images = ["image", ]
+        images = [
+            "image",
+        ]
         message = get_message(images=images)
         assert message.payload["image"] == images[0]
 
@@ -57,18 +52,14 @@ class TestMessage:
         assert message.payload["replies"] == [{"message": message} for message in replies]
 
     def test_check_replies_and_images(self):
-        """ Replies should only contain images or only Replies """
+        """Replies should only contain images or only Replies"""
         replies = ["message1", "message2"]
         images = ["image1", "image2"]
         message = get_message(replies=replies, images=images)
         assert message.payload["replies"] == [{"image": image} for image in images]
 
     def test_check_document(self):
-        document = dict(
-            content="content",
-            filename="filename",
-            caption="caption"
-        )
+        document = dict(content="content", filename="filename", caption="caption")
         message = get_message(document=document)
         assert message.payload["document"] == document
 

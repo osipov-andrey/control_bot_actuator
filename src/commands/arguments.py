@@ -3,27 +3,28 @@ from typing import Optional, List, Union
 
 
 __all__ = [
-    'String',
-    'Integer',
-    'ListArg',
-    'MyUser',
+    "String",
+    "Integer",
+    "ListArg",
+    "MyUser",
 ]
 
 
 class Arg(ABC):
-    """ Определяет один аргумент команды """
+    """Определяет один аргумент команды"""
+
     BOT_ARG_TYPE: str
 
     def __init__(
-            self,
-            name: str,
-            description: str,
-            *,
-            default: Optional[Union[str, int]] = None,
-            example: Optional[str] = None,
-            options: Optional[List[Union[str, int]]] = None,
-            allowed: Optional[List[Union[str, int]]] = None,
-            allow_options=False
+        self,
+        name: str,
+        description: str,
+        *,
+        default: Optional[Union[str, int]] = None,
+        example: Optional[str] = None,
+        options: Optional[List[Union[str, int]]] = None,
+        allowed: Optional[List[Union[str, int]]] = None,
+        allow_options=False,
     ):
         """
 
@@ -127,7 +128,7 @@ class ListArg(Arg):
 
 
 class MyUser(Integer):
-    """ ID пользователя телеграм, у которого есть доступ к командам клиента """
+    """ID пользователя телеграм, у которого есть доступ к командам клиента"""
 
     def _create_schema(self) -> dict:
         schema = super(MyUser, self)._create_schema()

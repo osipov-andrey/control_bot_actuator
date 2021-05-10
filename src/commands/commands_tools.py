@@ -4,7 +4,7 @@ import json
 from .. import exceptions
 
 
-TEMPLATE_DIR = 'feedback_templates'  # Папка с шаблонами в пользовательской программе
+TEMPLATE_DIR = "feedback_templates"  # Папка с шаблонами в пользовательской программе
 
 
 def load_json_template(file_name: str, path_to_file) -> dict:
@@ -17,7 +17,7 @@ def load_json_template(file_name: str, path_to_file) -> dict:
     path = path.joinpath(TEMPLATE_DIR)
     path = path.joinpath(file_name)
     try:
-        with open(str(path), 'r', encoding='utf-8') as json_:
+        with open(str(path), "r", encoding="utf-8") as json_:
             message_template = json.load(json_)
     except json.decoder.JSONDecodeError:
         raise exceptions.BadCommandTemplateException(file_name)

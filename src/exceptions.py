@@ -3,7 +3,7 @@ class HTTPClientConnectException(Exception):
 
 
 class BadCommandTemplateException(Exception):
-    def __init__(self, file_name=''):
+    def __init__(self, file_name=""):
         self.file_name = file_name
 
 
@@ -17,6 +17,7 @@ class UserException(Exception):
     Дает понять, что дальнейшая обработка
     исключения библиотекой не требуется
     """
+
     pass
 
 

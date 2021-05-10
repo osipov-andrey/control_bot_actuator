@@ -16,24 +16,18 @@ consumer = SSEConsumer(sse_url=f"http://localhost:8081/sse/{ACTUATOR_NAME}/event
 
 @dispatcher.register_callable_command
 class EchoCmd(HumanCallableCommandWithArgs):
-    """ Echo command """
+    """Echo command"""
+
     CMD = "echo"
-    ARGS = (
-        arguments.String("text", "Input text"),
-    )
+    ARGS = (arguments.String("text", "Input text"),)
 
     async def _execute(self):
-        """ Your pretty business logic is here ! :) """
-        await self.send_message(
-            text=f"Your text is: '{self.text}'"
-        )
+        """Your pretty business logic is here ! :)"""
+        await self.send_message(text=f"Your text is: '{self.text}'")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     actuator = Actuator(
-        name=ACTUATOR_NAME,
-        dispatcher=dispatcher,
-        publishers=publisher,
-        consumer=consumer
+        name=ACTUATOR_NAME, dispatcher=dispatcher, publishers=publisher, consumer=consumer
     )
     actuator.run()

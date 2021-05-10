@@ -7,35 +7,26 @@ from cba.messages import MessageTarget
 
 
 class TestSseEventParser:
-
     @pytest.mark.parametrize(
         "raw_cmd, attrs",
         [
             (
-                    'event: start\r\n'
-                    'data: {"command": "getAvailableMethods", '
-                    '"target": {"target_type": "service", "target_name": "hentest"}, '
-                    '"behavior": "service"}',
-                    {
-                        'event': 'start',
-                        'data': {
-                            "command": "getAvailableMethods",
-                            "target": {
-                                "target_type": "service",
-                                "target_name": "hentest"
-                            },
-                            "behavior": "service"}
-                    }
+                "event: start\r\n"
+                'data: {"command": "getAvailableMethods", '
+                '"target": {"target_type": "service", "target_name": "hentest"}, '
+                '"behavior": "service"}',
+                {
+                    "event": "start",
+                    "data": {
+                        "command": "getAvailableMethods",
+                        "target": {"target_type": "service", "target_name": "hentest"},
+                        "behavior": "service",
+                    },
+                },
             ),
-            (
-                    'data: {"client_name": "hentest"}',
-                    {"data": {"client_name": "hentest"}}
-            ),
-            (
-                    'data: "client_name": "hentest"}',
-                    {"data": '"client_name": "hentest"}'}
-            ),
-        ]
+            ('data: {"client_name": "hentest"}', {"data": {"client_name": "hentest"}}),
+            ('data: "client_name": "hentest"}', {"data": '"client_name": "hentest"}'}),
+        ],
     )
     def test_init(self, raw_cmd: str, attrs: dict):
         raw_event = SSEEventParser(raw_cmd)
@@ -46,30 +37,30 @@ class TestSseEventParser:
         "raw_cmd, event",
         [
             (
-                    'event: slave\r\n'
-                    'data: {"command": "adminOnly", '
-                    '"target": {"target_type": "user", "target_name": "172698654"}, '
-                    '"behavior": "admin", "args": {}}',
-                    BaseDispatcherEvent(
-                        command="adminOnly",
-                        target=MessageTarget(**{"target_type": "user", "target_name": "172698654"}),
-                        args={},
-                        behavior="admin"
-                    )
+                "event: slave\r\n"
+                'data: {"command": "adminOnly", '
+                '"target": {"target_type": "user", "target_name": "172698654"}, '
+                '"behavior": "admin", "args": {}}',
+                BaseDispatcherEvent(
+                    command="adminOnly",
+                    target=MessageTarget(**{"target_type": "user", "target_name": "172698654"}),
+                    args={},
+                    behavior="admin",
+                ),
             ),
             (
-                    'event: slave\r\n'
-                    'data: {"command": "HumanCallableArgs", '
-                    '"target": {"target_type": "user", "target_name": "172698654"}, '
-                    '"behavior": "user", "args": {"arg1": "321", "arg2": "qwerty"}}',
-                    BaseDispatcherEvent(
-                        command="HumanCallableArgs",
-                        target=MessageTarget(**{"target_type": "user", "target_name": "172698654"}),
-                        args={"arg1": "321", "arg2": "qwerty"},
-                        behavior="user"
-                    )
-            )
-        ]
+                "event: slave\r\n"
+                'data: {"command": "HumanCallableArgs", '
+                '"target": {"target_type": "user", "target_name": "172698654"}, '
+                '"behavior": "user", "args": {"arg1": "321", "arg2": "qwerty"}}',
+                BaseDispatcherEvent(
+                    command="HumanCallableArgs",
+                    target=MessageTarget(**{"target_type": "user", "target_name": "172698654"}),
+                    args={"arg1": "321", "arg2": "qwerty"},
+                    behavior="user",
+                ),
+            ),
+        ],
     )
     def test_call(self, raw_cmd: str, event: BaseDispatcherEvent):
         raw_event = SSEEventParser(raw_cmd)
@@ -82,10 +73,12 @@ class TestSseEventParser:
 
 class TestSseConsumer:
 
-    test_event = 'event: slave\r\n' \
-                 'data: {"command": "HumanCallableArgs", ' \
-                 '"target": {"target_type": "user", "target_name": "172698654"}, ' \
-                 '"behavior": "user", "args": {"arg1": "321", "arg2": "qwerty"}}'
+    test_event = (
+        "event: slave\r\n"
+        'data: {"command": "HumanCallableArgs", '
+        '"target": {"target_type": "user", "target_name": "172698654"}, '
+        '"behavior": "user", "args": {"arg1": "321", "arg2": "qwerty"}}'
+    )
 
     @pytest.fixture
     def get_events(self):

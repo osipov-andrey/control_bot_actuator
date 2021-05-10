@@ -5,7 +5,11 @@ import random
 from cba.dispatcher import CommandsDispatcher
 from cba.commands import MessageTarget, arguments
 from cba.commands.base_commands import (
-    BaseCommand, HumanCallableCommandWithArgs, ServiceCommand, hide, admin_only
+    BaseCommand,
+    HumanCallableCommandWithArgs,
+    ServiceCommand,
+    hide,
+    admin_only,
 )
 from cba.messages import Issue
 
@@ -15,7 +19,8 @@ dispatcher = CommandsDispatcher()
 
 @dispatcher.register_callable_command
 class TestDifferentBehavior(BaseCommand):
-    """ Тестовая команда с разным поведением для админа и юзверя - вы юзер """
+    """Тестовая команда с разным поведением для админа и юзверя - вы юзер"""
+
     CMD = "behavior"
 
     async def _execute(self):
@@ -26,10 +31,9 @@ class TestDifferentBehavior(BaseCommand):
 
 @TestDifferentBehavior.admin_behavior
 class TestDifferentBehaviorAdmin(HumanCallableCommandWithArgs):
-    """ Тестовая команда с разным поведением для админа и юзверя - вы админ """
-    ARGS = (
-        arguments.String("adminArg", "админский аргумент"),
-    )
+    """Тестовая команда с разным поведением для админа и юзверя - вы админ"""
+
+    ARGS = (arguments.String("adminArg", "админский аргумент"),)
 
     async def _execute(self):
         await self.send_message(
@@ -39,8 +43,9 @@ class TestDifferentBehaviorAdmin(HumanCallableCommandWithArgs):
 
 @dispatcher.register_callable_command
 class TestHumanCallableCommandWithReplies(BaseCommand):
-    """ Тестовая команда с ответами """
-    CMD = 'replies'
+    """Тестовая команда с ответами"""
+
+    CMD = "replies"
 
     async def _execute(self):
         replies = [f"Replies №:{i}" for i in range(3)]
@@ -52,15 +57,16 @@ class TestHumanCallableCommandWithReplies(BaseCommand):
 
 @dispatcher.register_callable_command
 class TestHumanCallableCommandWithIssue(BaseCommand):
-    """ Тестовая команда отправки уведомлений """
-    CMD = 'issue'
-    ISSUE_PREFIX = 'test-'
+    """Тестовая команда отправки уведомлений"""
+
+    CMD = "issue"
+    ISSUE_PREFIX = "test-"
 
     async def _execute(self):
         issue_id = str(random.randint(0, 1000))
 
         problem_text = ">>Disaster<< We have a problem!"
-        problem_issue = Issue(issue_id, 'PROBLEM', self.ISSUE_PREFIX)
+        problem_issue = Issue(issue_id, "PROBLEM", self.ISSUE_PREFIX)
         await self.send_message(
             subject=problem_text,
             issue=problem_issue,
@@ -68,7 +74,7 @@ class TestHumanCallableCommandWithIssue(BaseCommand):
 
         await asyncio.sleep(2)
 
-        resolved_issue = Issue(issue_id, 'RESOLVED', self.ISSUE_PREFIX)
+        resolved_issue = Issue(issue_id, "RESOLVED", self.ISSUE_PREFIX)
         resolved_text = ">>OK<< The problem is not with us ))0"
         await self.send_message(
             subject=resolved_text,
@@ -78,9 +84,10 @@ class TestHumanCallableCommandWithIssue(BaseCommand):
 
 @dispatcher.register_callable_command
 class TestHumanCallableCommandWithBadTemplate(BaseCommand):
-    """ Тестовая команда с `плохим` JSON-шаблоном """
-    CMD = 'badTemplate'
-    JSON_TMPL_FILE = 'bad_template.json'
+    """Тестовая команда с `плохим` JSON-шаблоном"""
+
+    CMD = "badTemplate"
+    JSON_TMPL_FILE = "bad_template.json"
     PATH_TO_FILE = __file__
 
     async def _execute(self):
@@ -89,28 +96,32 @@ class TestHumanCallableCommandWithBadTemplate(BaseCommand):
 
 @dispatcher.register_callable_command
 class TestHumanCallableCommandWithGoodTemplate(BaseCommand):
-    """ тестовая команда с `хорошим` JSON-шаблоном """
-    CMD = 'goodTemplate'
-    JSON_TMPL_FILE = 'good_template.json'
+    """тестовая команда с `хорошим` JSON-шаблоном"""
+
+    CMD = "goodTemplate"
+    JSON_TMPL_FILE = "good_template.json"
     PATH_TO_FILE = __file__
 
     async def _execute(self):
         await self.send_message(
-            subject='Good template',
+            subject="Good template",
             text=str(self.template),
         )
 
 
 @dispatcher.register_callable_command
 class TestHumanCallableCommandWithAliases(BaseCommand):
-    """ Тестовая команда с алиасами (макросами) дргуих команд """
-    CMD = 'Aliases'
+    """Тестовая команда с алиасами (макросами) дргуих команд"""
+
+    CMD = "Aliases"
 
     async def _execute(self):
-        text = f"\n{self.reverse_command(TestHumanCallableCommandWithArgs, '321', 'qwerty')}" \
-               f"\n{self.reverse_command(TestCommandToSendDocument)}" \
-               f"\n{self.reverse_command(TestCommandToSendOneImage)}" \
-               f"\n{self.reverse_command(TestHumanCallableCommandWithArgsChoose)}"
+        text = (
+            f"\n{self.reverse_command(TestHumanCallableCommandWithArgs, '321', 'qwerty')}"
+            f"\n{self.reverse_command(TestCommandToSendDocument)}"
+            f"\n{self.reverse_command(TestCommandToSendOneImage)}"
+            f"\n{self.reverse_command(TestHumanCallableCommandWithArgsChoose)}"
+        )
         await self.send_message(
             subject="Шаблоны других тестовых команд",
             text=text,
@@ -119,11 +130,13 @@ class TestHumanCallableCommandWithAliases(BaseCommand):
 
 @dispatcher.register_callable_command
 class TestHumanCallableCommandWithArgsChoose(HumanCallableCommandWithArgs):
-    """ Тестовая команда с выбором аргументов """
-    CMD = 'HumanCallableChoose'
+    """Тестовая команда с выбором аргументов"""
+
+    CMD = "HumanCallableChoose"
     ARGS = (
-        arguments.String('test_arg', "Тестовый аргумент с возможностью выбора",
-                         options=['val1', 'val2', 'val3']),
+        arguments.String(
+            "test_arg", "Тестовый аргумент с возможностью выбора", options=["val1", "val2", "val3"]
+        ),
     )
 
     async def _execute(self):
@@ -133,17 +146,14 @@ class TestHumanCallableCommandWithArgsChoose(HumanCallableCommandWithArgs):
 
 @dispatcher.register_callable_command
 class TestHumanCallableCommandWithInlineButtons(BaseCommand):
-    """ Тестовая команда с inline-кнопками """
-    CMD = 'InlineButtons'
+    """Тестовая команда с inline-кнопками"""
+
+    CMD = "InlineButtons"
 
     async def _execute(self):
         for i in range(3):
-            self.add_inline_button(
-                TestHumanCallableCommandWithArgs,
-                f">>info<< {i}", i, "test")
-        self.add_inline_button(
-            InlineButtonForEdit, "Try me, change me"
-        )
+            self.add_inline_button(TestHumanCallableCommandWithArgs, f">>info<< {i}", i, "test")
+        self.add_inline_button(InlineButtonForEdit, "Try me, change me")
         await self.send_message(
             subject="Кнопки под сообщением, 3 штуки, вызываемые",
             buttons=self.inline_buttons,
@@ -152,8 +162,9 @@ class TestHumanCallableCommandWithInlineButtons(BaseCommand):
 
 @dispatcher.register_callable_command
 class TestHumanCallableCommand(BaseCommand):
-    """ Тестовая вызываемая команда без аргументов """
-    CMD = 'HumanCallable'
+    """Тестовая вызываемая команда без аргументов"""
+
+    CMD = "HumanCallable"
 
     async def _execute(self):
         await self.send_message(
@@ -163,7 +174,8 @@ class TestHumanCallableCommand(BaseCommand):
 
 @TestHumanCallableCommand.admin_behavior
 class TestHumanCallableCommandAdminBehaviour(BaseCommand):
-    """ Тестовая вызываемая команда без аргументов для админа """
+    """Тестовая вызываемая команда без аргументов для админа"""
+
     async def _execute(self):
         await self.send_message(
             subject=">>info<< Admin",
@@ -172,11 +184,12 @@ class TestHumanCallableCommandAdminBehaviour(BaseCommand):
 
 @dispatcher.register_callable_command
 class TestHumanCallableCommandWithArgs(HumanCallableCommandWithArgs):
-    """ Тестовая вызываемая команда с аргументами """
-    CMD = 'HumanCallableArgs'
+    """Тестовая вызываемая команда с аргументами"""
+
+    CMD = "HumanCallableArgs"
     ARGS = (
-        arguments.Integer('arg1', 'Тестовый аргумент из чисел', example='123'),
-        arguments.String('arg2', 'Тестовый аргумент из букв', example='abc'),
+        arguments.Integer("arg1", "Тестовый аргумент из чисел", example="123"),
+        arguments.String("arg2", "Тестовый аргумент из букв", example="abc"),
     )
 
     def _validate(self) -> list:
@@ -196,14 +209,15 @@ class TestHumanCallableCommandWithArgs(HumanCallableCommandWithArgs):
 
 @dispatcher.register_callable_command
 class TestCommandToSendDocument(BaseCommand):
-    """ Тестовая вызываемая команда для отправки аргумента """
-    CMD = 'SendDoc'
+    """Тестовая вызываемая команда для отправки аргумента"""
+
+    CMD = "SendDoc"
 
     async def _execute(self):
         document = {
             "content": "Тестовое содержимое файла",
             "filename": "test_file_name.log",
-            "caption": "Тестовое описание файла"
+            "caption": "Тестовое описание файла",
         }
         await self.send_message(
             document=document,
@@ -212,27 +226,31 @@ class TestCommandToSendDocument(BaseCommand):
 
 @dispatcher.register_callable_command
 class TestCommandToSendOneImage(BaseCommand):
-    """ Тестовая вызываемая команда для отправки одного изображения """
-    CMD = 'SendImage'
+    """Тестовая вызываемая команда для отправки одного изображения"""
+
+    CMD = "SendImage"
 
     async def _execute(self):
-        with open('test_image.jpg', 'rb') as image:
+        with open("test_image.jpg", "rb") as image:
             image_content = image.read()
         encoded_content = base64.b64encode(image_content).decode()
         await self.send_message(
             subject="Одно изображение",
             text="Этот текст и изображение должны быть в одном сообщении",
-            images=[encoded_content, ],
+            images=[
+                encoded_content,
+            ],
         )
 
 
 @dispatcher.register_callable_command
 class TestCommandToSendManyImage(BaseCommand):
-    """ Тестовая вызываемая команда для отправки нескольких изображений """
-    CMD = 'SendManyImages'
+    """Тестовая вызываемая команда для отправки нескольких изображений"""
+
+    CMD = "SendManyImages"
 
     async def _execute(self):
-        with open('test_image.jpg', 'rb') as image:
+        with open("test_image.jpg", "rb") as image:
             image_content = image.read()
         encoded_content = base64.b64encode(image_content).decode()
         await self.send_message(
@@ -243,8 +261,9 @@ class TestCommandToSendManyImage(BaseCommand):
 
 
 class TestServiceCommand(ServiceCommand):
-    """ Тестовая служебная команда """
-    CMD = 'Service'
+    """Тестовая служебная команда"""
+
+    CMD = "Service"
 
     async def _execute(self):
         await self.send_message(
@@ -254,8 +273,9 @@ class TestServiceCommand(ServiceCommand):
 
 @dispatcher.register_callable_command
 class TestCallableCommandWithCallingServiceCommand(BaseCommand):
-    """ Тестовая вызываемая команда, в ходе выполнения которой вызовется сервисная команда """
-    CMD = 'CallingServiceCommand'
+    """Тестовая вызываемая команда, в ходе выполнения которой вызовется сервисная команда"""
+
+    CMD = "CallingServiceCommand"
 
     async def _execute(self):
         service_command = self.create_subcommand(TestServiceCommand)
@@ -264,8 +284,9 @@ class TestCallableCommandWithCallingServiceCommand(BaseCommand):
 
 @dispatcher.register_callable_command
 class TestCallableInternalError(BaseCommand):
-    """ Тестовая вызываемая команда, проверяет возврат сообщений о внутренних ошибках """
-    CMD = 'InternalError'
+    """Тестовая вызываемая команда, проверяет возврат сообщений о внутренних ошибках"""
+
+    CMD = "InternalError"
 
     async def _execute(self):
         raise ZeroDivisionError(" - так и задумано")
@@ -273,8 +294,9 @@ class TestCallableInternalError(BaseCommand):
 
 @dispatcher.register_callable_command
 class TestHTMlSymbols(BaseCommand):
-    """ Тестовая вызываемая команда, проверяет HTML разметку """
-    CMD = 'HTMLmarkdown'
+    """Тестовая вызываемая команда, проверяет HTML разметку"""
+
+    CMD = "HTMLmarkdown"
 
     async def _execute(self):
         message = """
@@ -296,7 +318,7 @@ class TestHTMlSymbols(BaseCommand):
 
         await self.send_message(
             subject="Лупа >>lupa<< Очки >>glasses<< "
-                    "<a href=\"https://www.google.com\">Таблетка</a> >>drug<<",
+            '<a href="https://www.google.com">Таблетка</a> >>drug<<',
             text=message,
         )
 
@@ -304,46 +326,44 @@ class TestHTMlSymbols(BaseCommand):
 @hide
 @dispatcher.register_callable_command
 class TestHideCallableCommand(BaseCommand):
-    """ Тестовая вызываемая команда, которую не должно быть видно """
-    CMD = 'hide'
+    """Тестовая вызываемая команда, которую не должно быть видно"""
+
+    CMD = "hide"
 
     async def _execute(self):
-        await self.send_message(
-            subject="Вы знаете некоторые тайны"
-        )
+        await self.send_message(subject="Вы знаете некоторые тайны")
 
 
 @admin_only
 @dispatcher.register_callable_command
 class TestAdminCallableCommand(BaseCommand):
-    """ Тестовая вызываемая команда, которую может вызывать только админ"""
-    CMD = 'adminOnly'
+    """Тестовая вызываемая команда, которую может вызывать только админ"""
+
+    CMD = "adminOnly"
 
     async def _execute(self):
-        await self.send_message(
-            subject="Админская команда"
-        )
+        await self.send_message(subject="Админская команда")
 
 
 @dispatcher.register_callable_command
 class TestTakeUserId(HumanCallableCommandWithArgs):
-    """ Возвращает ID пользователя телеграм"""
-    CMD = 'giveMeMyId'
+    """Возвращает ID пользователя телеграм"""
+
+    CMD = "giveMeMyId"
     ARGS = (
         arguments.MyUser("user", "ID подписчика данного канала"),
         arguments.String("string", "какая-то строка"),
     )
 
     async def _execute(self):
-        await self.send_message(
-            subject=f"Получен ID {self.user}"
-        )
+        await self.send_message(subject=f"Получен ID {self.user}")
 
 
 @hide
 @dispatcher.register_callable_command
 class TakeListWithArg(HumanCallableCommandWithArgs):
-    """ Получает обычный аргумент и список """
+    """Получает обычный аргумент и список"""
+
     CMD = "argAndList"
     ARGS = (
         arguments.String("string", "Какая-то строка"),
@@ -358,24 +378,24 @@ class TakeListWithArg(HumanCallableCommandWithArgs):
 
 @dispatcher.register_callable_command
 class TakeList(HumanCallableCommandWithArgs):
-    """ Получает список """
+    """Получает список"""
+
     CMD = "takeList"
-    ARGS = (
-        arguments.ListArg("listarg", "Какой-то список"),
-    )
+    ARGS = (arguments.ListArg("listarg", "Какой-то список"),)
 
     async def _execute(self):
-        hide_command = self.reverse_command(TakeListWithArg, 'kek', '1', '2', '3')
+        hide_command = self.reverse_command(TakeListWithArg, "kek", "1", "2", "3")
         await self.send_message(
             subject=f"Получили такой список: {self.listarg}",
-            text=f"И вы можете попробовать вызвать такую команду:\n{hide_command}"
+            text=f"И вы можете попробовать вызвать такую команду:\n{hide_command}",
         )
 
 
 @hide
 @dispatcher.register_callable_command
 class InlineButtonForEdit(BaseCommand):
-    """ Инлайн-кнопка для редактирования сообщения """
+    """Инлайн-кнопка для редактирования сообщения"""
+
     CMD = "inlineEdit"
 
     async def _execute(self):
@@ -387,11 +407,12 @@ class InlineButtonForEdit(BaseCommand):
 
 @dispatcher.register_callable_command
 class SendToChannel(BaseCommand):
-    """ Отправить в канал """
+    """Отправить в канал"""
+
     CMD = "channel"
 
     async def _execute(self):
         await self.send_message(
             subject="Рассылка по каналу",
-            target=MessageTarget(target_type="channel", target_name="test")
+            target=MessageTarget(target_type="channel", target_name="test"),
         )

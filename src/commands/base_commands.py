@@ -42,15 +42,16 @@ class BaseCommand(ABC):
     Базовый класс команд обратной связи.
     Для создания новой команды просто отпределите класс-наследник.
     """
-    EMOJI = '>>Not_classified<<'        # Эмоджи команды
-    ARGS = tuple()                      # Описание аргументво команды
-    JSON_TMPL_FILE: str = None          # Файл с шаблоном JSON-запроса к API
-    PATH_TO_FILE: str = None            # Путь к файлу с пользовательскими командами
-    CMD: str                            # Команда в telegram
-    HUMAN_CALLABLE: bool                # Могут ли вызывать пользователи?
+
+    EMOJI = ">>Not_classified<<"  # Эмоджи команды
+    ARGS = tuple()  # Описание аргументво команды
+    JSON_TMPL_FILE: str = None  # Файл с шаблоном JSON-запроса к API
+    PATH_TO_FILE: str = None  # Путь к файлу с пользовательскими командами
+    CMD: str  # Команда в telegram
+    HUMAN_CALLABLE: bool  # Могут ли вызывать пользователи?
     hidden = False
     admin_only = False
-    behavior__admin: Optional[Type['BaseCommand']] = None
+    behavior__admin: Optional[Type["BaseCommand"]] = None
 
     @classmethod
     def hide(cls):
@@ -68,8 +69,8 @@ class BaseCommand(ABC):
         cls.behavior__admin = cls
 
     @classmethod
-    def admin_behavior(cls, command: Type['BaseCommand']):
-        """ Class decorator """
+    def admin_behavior(cls, command: Type["BaseCommand"]):
+        """Class decorator"""
         if cls.admin_only:
             raise AttributeError("The command is already only for the admin!")
         command.CMD = cls.CMD
@@ -77,14 +78,14 @@ class BaseCommand(ABC):
         return command
 
     def __init__(
-            self,
-            *args,
-            target: MessageTarget,
-            client_info: ClientInfo,
-            publishers: List[BasePublisher],
-            parent_id: Optional[str] = None,
-            command_args: Optional[dict] = None,
-            **kwargs
+        self,
+        *args,
+        target: MessageTarget,
+        client_info: ClientInfo,
+        publishers: List[BasePublisher],
+        parent_id: Optional[str] = None,
+        command_args: Optional[dict] = None,
+        **kwargs,
     ):
         """
         :param args: используются для передачи аргументов команд.
@@ -103,19 +104,26 @@ class BaseCommand(ABC):
         logger.info(
             "\n%s\nCreated command-instance [%s]\n"
             "Args: %s\ntarget: %s\nkwargs: %s\nid: %s\nparent_id: %s\n%s\n",
-            log_marker, self.CMD, args, target, kwargs, self.id, self.parent_id, log_marker
+            log_marker,
+            self.CMD,
+            args,
+            target,
+            kwargs,
+            self.id,
+            self.parent_id,
+            log_marker,
         )
 
     def create_subcommand(
-            self,
-            cmd_type: Type['BaseCommand'],
-            *args,
-            target: Optional[MessageTarget] = None,
-            client_info: Optional[ClientInfo] = None,
-            publishers: Optional[List[BasePublisher]] = None,
-            command_args: Optional[dict] = None,
-            **kwargs
-    ) -> 'BaseCommand':
+        self,
+        cmd_type: Type["BaseCommand"],
+        *args,
+        target: Optional[MessageTarget] = None,
+        client_info: Optional[ClientInfo] = None,
+        publishers: Optional[List[BasePublisher]] = None,
+        command_args: Optional[dict] = None,
+        **kwargs,
+    ) -> "BaseCommand":
 
         if not target:
             target = self.target
@@ -133,7 +141,7 @@ class BaseCommand(ABC):
             publishers=publishers,
             command_args=command_args,
             parent_id=self.id,
-            **kwargs
+            **kwargs,
         )
 
     async def send_message(self, target: MessageTarget = None, **kwargs):
@@ -157,26 +165,26 @@ class BaseCommand(ABC):
             sender_name = self.client_info.name
         return sender_name
 
-    def add_inline_button(self, command_type: Type['BaseCommand'], text: str, *args):
-        """ Добавляет информацию о необходимых кнопках в чатботе после сообщения """
+    def add_inline_button(self, command_type: Type["BaseCommand"], text: str, *args):
+        """Добавляет информацию о необходимых кнопках в чатботе после сообщения"""
         button_info = {
             "text": parse_and_paste_emoji(text),
-            "callback_data": self.reverse_command(command_type, *args)
+            "callback_data": self.reverse_command(command_type, *args),
         }
         self.inline_buttons.append(button_info)
 
-    def reverse_command(self, command: Type['BaseCommand'], *args):
-        """ Создает строковую команду """
+    def reverse_command(self, command: Type["BaseCommand"], *args):
+        """Создает строковую команду"""
         # TODO проверку команд
         cmd = command.CMD
         reversed_cmd = f"/{self.client_info.name}_{cmd}_{'_'.join(str(arg) for arg in args)}"
-        if reversed_cmd.endswith('_'):
+        if reversed_cmd.endswith("_"):
             reversed_cmd = reversed_cmd[:-1]
         return reversed_cmd
 
     @abstractmethod
     async def _execute(self):
-        """ Бизнес-логика """
+        """Бизнес-логика"""
         ...
 
     async def execute(self):
@@ -190,9 +198,11 @@ class BaseCommand(ABC):
 
     @classmethod
     def description(cls, client_name):
-        """ Описание команды """
-        return f"{cls.EMOJI} {'<b>(admin)</b>' if cls.admin_only else ''} " \
-               f"/{client_name}_{cls.CMD} - {cls.__doc__.strip()}"
+        """Описание команды"""
+        return (
+            f"{cls.EMOJI} {'<b>(admin)</b>' if cls.admin_only else ''} "
+            f"/{client_name}_{cls.CMD} - {cls.__doc__.strip()}"
+        )
 
     def __eq__(self, other):
         if type(self) != type(other):
@@ -215,7 +225,8 @@ class BaseCommand(ABC):
 
 
 class HumanCallableCommandWithArgs(BaseCommand, ABC):
-    """ Подкласс для определения команд, которые вызываются с аргументами """
+    """Подкласс для определения команд, которые вызываются с аргументами"""
+
     HUMAN_CALLABLE = True
     ARGS: Tuple[arguments.Arg] = tuple()
 
@@ -242,7 +253,7 @@ class HumanCallableCommandWithArgs(BaseCommand, ABC):
         return {arg.name: arg.arg_info for arg in cls.ARGS}
 
     def _set_args(self, args: dict) -> dict:
-        """ Заменить дефолтные аргументы на полученные при вызове команды """
+        """Заменить дефолтные аргументы на полученные при вызове команды"""
         default_args = {arg.name: arg.default for arg in self.ARGS}
 
         for arg_name, arg_value in args.items():
@@ -272,23 +283,25 @@ class HumanCallableCommandWithArgs(BaseCommand, ABC):
         pass
 
     def __getattr__(self, item):
-        """ Чтобы PyCharm не ругался на отсутствие атрибутов """
+        """Чтобы PyCharm не ругался на отсутствие атрибутов"""
         return self.__dict__[item]
 
 
 class ServiceCommand(BaseCommand, ABC):
-    """ Подкласс для определения служебных команд """
+    """Подкласс для определения служебных команд"""
+
     HUMAN_CALLABLE = False
 
     async def execute(self, *args, **kwargs):
-        """ Служебной команде не к чему вызывать другие служебные """
+        """Служебной команде не к чему вызывать другие служебные"""
         return await self._execute()
 
 
 class WrongArguments(ServiceCommand):
-    """ Вызывается автоматически при отправке невалидных аргументов.\n """
-    EMOJI = '>>WARNING<<'
-    CMD = 'WrongArguments'
+    """Вызывается автоматически при отправке невалидных аргументов.\n"""
+
+    EMOJI = ">>WARNING<<"
+    CMD = "WrongArguments"
 
     def __init__(self, wrong_arguments: list, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -297,14 +310,15 @@ class WrongArguments(ServiceCommand):
     async def _execute(self):
         await self.send_message(
             subject=f"{self.EMOJI} Wrong arguments",
-            text=', '.join(self.wrong_arguments),
+            text=", ".join(self.wrong_arguments),
         )
 
 
 class NotEnoughArguments(ServiceCommand):
-    """ Вызывается автоматически при нехватке аргументов.\n """
-    EMOJI = '>>WARNING<<'
-    CMD = 'NotEnoughArguments'
+    """Вызывается автоматически при нехватке аргументов.\n"""
+
+    EMOJI = ">>WARNING<<"
+    CMD = "NotEnoughArguments"
 
     def __init__(self, missing_args: list, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -313,14 +327,15 @@ class NotEnoughArguments(ServiceCommand):
     async def _execute(self):
         await self.send_message(
             subject=f"{self.EMOJI} Not Enough arguments",
-            text=', '.join(self.missing_args),
+            text=", ".join(self.missing_args),
         )
 
 
 class WrongCommand(ServiceCommand):
-    """ Вызывается автоматически при отправке невалидных аргументов.\n """
-    EMOJI = '>>WARNING<<'
-    CMD = 'WrongCommand'
+    """Вызывается автоматически при отправке невалидных аргументов.\n"""
+
+    EMOJI = ">>WARNING<<"
+    CMD = "WrongCommand"
 
     async def _execute(self):
         await self.send_message(
@@ -330,9 +345,10 @@ class WrongCommand(ServiceCommand):
 
 
 class InternalError(ServiceCommand):
-    """ Вызывается автоматически при нехватке аргументов.\n """
-    EMOJI = '>>Disaster<<'
-    CMD = 'InternalError'
+    """Вызывается автоматически при нехватке аргументов.\n"""
+
+    EMOJI = ">>Disaster<<"
+    CMD = "InternalError"
 
     def __init__(self, exception_info, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -340,7 +356,7 @@ class InternalError(ServiceCommand):
 
     async def _execute(self):
         subject = f"{self.EMOJI} Telegram lever get in self in trouble! Please, tell to your admin."
-        text = str(self.exception_info.__class__.__name__) + ' ' + str(self.exception_info)
+        text = str(self.exception_info.__class__.__name__) + " " + str(self.exception_info)
         await self.send_message(
             subject=subject,
             text=text,
@@ -352,10 +368,11 @@ class BadJSONTemplateCommand(ServiceCommand):
     Некоторые JSON-шаблоны допускается редактировать во время работы программы.
     Данная команда вызывается автоматически при ошибке в JSON-шаблоне.
     """
-    EMOJI = '>>DISASTER<<'
-    CMD = 'BadJSONError'
 
-    def __init__(self, *args, template='', **kwargs):
+    EMOJI = ">>DISASTER<<"
+    CMD = "BadJSONError"
+
+    def __init__(self, *args, template="", **kwargs):
         super().__init__(*args, **kwargs)
         self.template = template
 
@@ -366,7 +383,7 @@ class BadJSONTemplateCommand(ServiceCommand):
         )
 
 
-def admin_only(cls: 'BaseCommand'):
+def admin_only(cls: "BaseCommand"):
     """
     Отметить команду как доступную только админу.
     Т.е. чат-бот будет добавлять ее в главное меню киента только для админов.
@@ -375,7 +392,7 @@ def admin_only(cls: 'BaseCommand'):
     return cls
 
 
-def hide(cls: 'BaseCommand'):
+def hide(cls: "BaseCommand"):
     """
     Отметить команду как "спрятанную".
     Т.е. чат-бот о ней знает, но в главное меню клиента не будет ее добавлять.

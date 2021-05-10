@@ -13,16 +13,17 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class Actuator:
-    """ Класс для связывания получаетеля команд и их диспетчера """
+    """Класс для связывания получаетеля команд и их диспетчера"""
+
     def __init__(
-            self,
-            name: str,
-            *,
-            consumer: SSEConsumer,
-            dispatcher: CommandsDispatcher,
-            publishers: Union[BasePublisher, List[BasePublisher], None] = None,
-            verbose_name="",
-            hide_name=False,
+        self,
+        name: str,
+        *,
+        consumer: SSEConsumer,
+        dispatcher: CommandsDispatcher,
+        publishers: Union[BasePublisher, List[BasePublisher], None] = None,
+        verbose_name="",
+        hide_name=False,
     ):
         self.client_info = ClientInfo(name, verbose_name, hide_name)
         self.consumer = consumer

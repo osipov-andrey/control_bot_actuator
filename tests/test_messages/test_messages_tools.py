@@ -1,15 +1,14 @@
 import pytest
 
-from cba.messages.messages_tools import parse_and_paste_emoji, _clear_html, \
-    _build_message_subject
+from cba.messages.messages_tools import parse_and_paste_emoji, _clear_html, _build_message_subject
 
 
 @pytest.mark.parametrize(
     "input_string, output_string",
     [
-        ('Info about emoji: >>hankey<<!', 'Info about emoji: 💩!'),
-        ('Maybe many emojies?? >>Disaster<< >>High<<>>OK', 'Maybe many emojies?? 🔥 🛑>>OK'),
-    ]
+        ("Info about emoji: >>hankey<<!", "Info about emoji: 💩!"),
+        ("Maybe many emojies?? >>Disaster<< >>High<<>>OK", "Maybe many emojies?? 🔥 🛑>>OK"),
+    ],
 )
 def test_parse_and_paste_emoji(input_string, output_string):
     assert parse_and_paste_emoji(input_string) == output_string
@@ -22,7 +21,7 @@ def test_parse_and_paste_emoji(input_string, output_string):
         ("", "Client", "<i><b>Client\n</b></i>"),
         ("Subject", "", "<i><b>Subject\n</b></i>"),
         ("", "", "<i><b></b></i>"),
-    ]
+    ],
 )
 def test_build_message_subject(subject, client, output):
     assert _build_message_subject(subject, client) == output
@@ -90,9 +89,9 @@ class TestCleanHtml:
         [
             (linear_html_structure_input, linear_html_structure_output),
             (tree_html_structure_input, tree_html_structure_output),
-        ]
+        ],
     )
     def test_clear_html(self, input_html, output_html):
-        expected_data = [line.strip() for line in output_html.split('\n')]
-        actual_data = [line.strip() for line in _clear_html(input_html).split('\n')]
+        expected_data = [line.strip() for line in output_html.split("\n")]
+        actual_data = [line.strip() for line in _clear_html(input_html).split("\n")]
         assert actual_data == expected_data

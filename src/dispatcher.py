@@ -10,12 +10,9 @@ from cba.publishers import BasePublisher
 from cba.helpers import ClientInfo
 
 
-__all__ = [
-    "BaseDispatcherEvent",
-    "CommandsDispatcher"
-]
+__all__ = ["BaseDispatcherEvent", "CommandsDispatcher"]
 
-_INTRO_COMMAND = 'getAvailableMethods'
+_INTRO_COMMAND = "getAvailableMethods"
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -29,12 +26,8 @@ class BaseDispatcherEvent:
     Все попадающие в диспетчер эвенты должны
     соответствовать протоколу данного класса
     """
-    def __init__(self,
-                 command: str,
-                 target: MessageTarget,
-                 args: dict,
-                 behavior: str
-                 ):
+
+    def __init__(self, command: str, target: MessageTarget, args: dict, behavior: str):
         assert target.target_type in ("user", "channel", "service")
         self._command = command
         self._target = target
@@ -59,12 +52,14 @@ class BaseDispatcherEvent:
 
 
 class CommandsDispatcher:
-    """ После получения команды из telegram возвращает соотвествующий инстанс """
+    """После получения команды из telegram возвращает соотвествующий инстанс"""
 
     def __init__(self):
         self.client_info = None
         self.callable_commands = list()
-        self.service_commands = [Introduce, ]
+        self.service_commands = [
+            Introduce,
+        ]
         self.publishers = list()
 
     def set_publishers(self, publishers: Union[BasePublisher, List[BasePublisher]]):
@@ -117,9 +112,7 @@ class CommandsDispatcher:
         # Что ниже - убивает приложение
         except exceptions.BadCommandTemplateException as err:
             # Загрузка шаблонов происходит и до вызова метода execute() у команд
-            await commands.BadJSONTemplateCommand(
-                template=err.file_name, **cmd_kwargs
-            ).execute()
+            await commands.BadJSONTemplateCommand(template=err.file_name, **cmd_kwargs).execute()
             raise
         except BaseException as err:
             await commands.InternalError(err, **cmd_kwargs).execute()
@@ -151,27 +144,23 @@ class CommandsDispatcher:
 
 @hide
 class Introduce(commands.BaseCommand):
-    """ Передает информацию о поддерживаемых командах. Вызывается сервером автоматически.\n """
-    EMOJI = '>>WARNING<<'
+    """Передает информацию о поддерживаемых командах. Вызывается сервером автоматически.\n"""
+
+    EMOJI = ">>WARNING<<"
     CMD = _INTRO_COMMAND
-    #TODO: send service description
+    # TODO: send service description
     def __init__(self, *args, commands_: list, **kwargs):
         super().__init__(*args, **kwargs)
         self.commands = commands_
 
     def collect_commands_to_json(self) -> dict:
 
-        commands_dict = {
-            cmd.CMD: self._get_cmd_full_description(cmd)
-            for cmd in self.commands
-        }
+        commands_dict = {cmd.CMD: self._get_cmd_full_description(cmd) for cmd in self.commands}
 
         return commands_dict
 
-    def _get_cmd_full_description(self, cmd: Type['BaseCommand']) -> dict:
-        description = {
-            "hidden": cmd.hidden
-        }
+    def _get_cmd_full_description(self, cmd: Type["BaseCommand"]) -> dict:
+        description = {"hidden": cmd.hidden}
 
         if cmd.admin_only:
             description["behavior__admin"] = self._get_cmd_behavior(cmd)
@@ -182,19 +171,16 @@ class Introduce(commands.BaseCommand):
             description["behavior__user"] = self._get_cmd_behavior(cmd)
         return description
 
-    def _get_cmd_behavior(self, cmd: Type['BaseCommand']) -> dict:
+    def _get_cmd_behavior(self, cmd: Type["BaseCommand"]) -> dict:
         # noinspection PyUnresolvedReferences
         return {
-                'args': cmd.args_description() if cmd.ARGS else {},
-                'description': commands.parse_and_paste_emoji(
-                    cmd.description(self.client_info.name)
-                ),
-            }
+            "args": cmd.args_description() if cmd.ARGS else {},
+            "description": commands.parse_and_paste_emoji(cmd.description(self.client_info.name)),
+        }
 
     async def _execute(self):
         client_commands = self.collect_commands_to_json()
         await self.send_message(
-            subject='Introducing commands',
+            subject="Introducing commands",
             commands=client_commands,
         )
-

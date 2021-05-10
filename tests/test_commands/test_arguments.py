@@ -32,7 +32,7 @@ class BaseArgInfo(BaseModel):
 
     class Config:
         # Название поля 'schema' совпадает с зарезервированным словом pydantic
-        fields = {'schema_': 'schema'}
+        fields = {"schema_": "schema"}
 
 
 class IntegerArgInfo(BaseArgInfo):
@@ -71,21 +71,16 @@ class TestArguments:
             description="description",
             example="example",
             options=["1", "2"],
-            allowed=["1", "2", "3"]
+            allowed=["1", "2", "3"],
         )
-        assert arg.arg_info['schema']["allowed"] == ["1", "2", "3"]
+        assert arg.arg_info["schema"]["allowed"] == ["1", "2", "3"]
         assert arg.arg_info["options"] == ["1", "2"]
         self._validate_arg(arg, StringArgInfo)
 
     def test_allow_options(self):
 
-        arg = String(
-            name="name",
-            description="description",
-            options=["1", "2"],
-            allow_options=True
-        )
-        assert arg.arg_info['schema']['allowed'] == ["1", "2"]
+        arg = String(name="name", description="description", options=["1", "2"], allow_options=True)
+        assert arg.arg_info["schema"]["allowed"] == ["1", "2"]
 
     def test_int_arg(self):
         arg = Integer(
@@ -94,7 +89,7 @@ class TestArguments:
             options=[1, 2],
             maximum=1,
             minimum=2,
-            allow_options=True
+            allow_options=True,
         )
         self._validate_arg(arg, IntegerArgInfo)
 

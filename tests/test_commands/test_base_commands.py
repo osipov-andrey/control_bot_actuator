@@ -9,12 +9,13 @@ from cba.publishers import HTTPPublisher
 
 @pytest.fixture(scope="function")
 def test_cmd_class(cmd="test"):
-
     class Cmd4Testing(BaseCommand):
-        """ Команда для юнит-тестов """
+        """Команда для юнит-тестов"""
+
         CMD = cmd
 
-        async def _execute(self): ...
+        async def _execute(self):
+            ...
 
     yield Cmd4Testing
 
@@ -23,17 +24,14 @@ def test_cmd_class(cmd="test"):
 def test_cmd_instance(test_cmd_class):
     target = MessageTarget(target_type="service", target_name="test")
     client_info = ClientInfo(name="test")
-    publishers = [HTTPPublisher(url="", headers={}), ]
-    cmd = test_cmd_class(
-        target=target,
-        client_info=client_info,
-        publishers=publishers
-    )
+    publishers = [
+        HTTPPublisher(url="", headers={}),
+    ]
+    cmd = test_cmd_class(target=target, client_info=client_info, publishers=publishers)
     yield cmd
 
 
 class TestBaseCommandClassMethods:
-
     def test_hide(self, test_cmd_class):
         test_cmd_class.hide()
         assert test_cmd_class.hidden is True
@@ -48,17 +46,17 @@ class TestBaseCommandClassMethods:
         assert test_cmd_class.admin_only is True
 
     def test_admin_behavior(self, test_cmd_class):
-
         @test_cmd_class.admin_behavior
-        class CmdAdminBehavior(BaseCommand): ...
+        class CmdAdminBehavior(BaseCommand):
+            ...
 
         assert test_cmd_class.behavior__admin is CmdAdminBehavior
         assert CmdAdminBehavior.CMD == test_cmd_class.CMD
 
     def test_admin_only_with_admin_behavior(self, test_cmd_class):
-
         @test_cmd_class.admin_behavior
-        class CmdAdminBehavior(BaseCommand): ...
+        class CmdAdminBehavior(BaseCommand):
+            ...
 
         with pytest.raises(AttributeError):
             test_cmd_class.mark_as_admin_only()
@@ -69,17 +67,14 @@ class TestBaseCommandClassMethods:
         with pytest.raises(AttributeError):
 
             @test_cmd_class.admin_behavior
-            class CmdAdminBehavior(BaseCommand): ...
+            class CmdAdminBehavior(BaseCommand):
+                ...
 
 
 class TestBaseCommandRegularMethods:
-
     def test_create_subcommand(self, test_cmd_instance, test_cmd_class):
         command_args = dict(arg1="val1")
-        sub_cmd = test_cmd_instance.create_subcommand(
-            test_cmd_class,
-            command_args=command_args
-        )
+        sub_cmd = test_cmd_instance.create_subcommand(test_cmd_class, command_args=command_args)
         assert sub_cmd.target == test_cmd_instance.target
         assert sub_cmd.publishers == test_cmd_instance.publishers
         assert sub_cmd.client_info == test_cmd_instance.client_info
@@ -91,16 +86,10 @@ class TestBaseCommandRegularMethods:
         images = ["image1", "image2", "image3"]
         mocker.patch("src.publishers.HTTPPublisher.publish_message")
         target = MessageTarget("test", "test")
-        message_kwargs = dict(
-            subject="subject",
-            text="text",
-            images=images
-        )
+        message_kwargs = dict(subject="subject", text="text", images=images)
 
         spy = mocker.spy(HTTPPublisher, "publish_message")
-        await test_cmd_instance.send_message(
-            target=target, **message_kwargs
-        )
+        await test_cmd_instance.send_message(target=target, **message_kwargs)
 
         message_obj = spy.await_args.args[0]
         assert target == MessageTarget(**message_obj.payload["target"])
@@ -110,20 +99,17 @@ class TestBaseCommandRegularMethods:
     async def test_send_message_without_target(self, test_cmd_instance, mocker):
         mocker.patch("src.publishers.HTTPPublisher.publish_message")
         spy = mocker.spy(HTTPPublisher, "publish_message")
-        await test_cmd_instance.send_message(
-            text="text"
-        )
+        await test_cmd_instance.send_message(text="text")
         message_obj = spy.await_args.args[0]
         assert test_cmd_instance.target == MessageTarget(**message_obj.payload["target"])
 
     def test_add_inline_button(self, test_cmd_instance, test_cmd_class):
-        test_cmd_instance.add_inline_button(
-            test_cmd_class, "button", "arg1", "arg2"
-        )
+        test_cmd_instance.add_inline_button(test_cmd_class, "button", "arg1", "arg2")
         button_info = test_cmd_instance.inline_buttons[0]
         assert button_info["text"] == "button"
-        assert button_info["callback_data"] == \
-               test_cmd_instance.reverse_command(test_cmd_class, "arg1", "arg2")
+        assert button_info["callback_data"] == test_cmd_instance.reverse_command(
+            test_cmd_class, "arg1", "arg2"
+        )
 
     def test_reverse_command(self, test_cmd_instance, test_cmd_class):
         cmd_macros = test_cmd_instance.reverse_command(test_cmd_class, "arg1", "arg2")
@@ -132,8 +118,7 @@ class TestBaseCommandRegularMethods:
 
     @pytest.mark.asyncio
     async def test_execute(self, test_cmd_class, test_cmd_instance):
-
-        @patch.object(test_cmd_class, '_execute')
+        @patch.object(test_cmd_class, "_execute")
         async def test(mock_execute):
             await test_cmd_instance.execute()
             mock_execute.assert_called()
@@ -155,13 +140,16 @@ class TestBaseCommandRegularMethods:
 
 
 class TestDecorators:
-
     def test_admin_only(self):
         @admin_only
-        class Cmd4Testing(BaseCommand): ...
+        class Cmd4Testing(BaseCommand):
+            ...
+
         assert Cmd4Testing.behavior__admin == Cmd4Testing
 
     def test_hide(self):
         @hide
-        class Cmd4Testing(BaseCommand): ...
+        class Cmd4Testing(BaseCommand):
+            ...
+
         assert Cmd4Testing.hidden is True

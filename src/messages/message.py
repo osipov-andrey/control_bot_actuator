@@ -8,9 +8,7 @@ from .messages_tools import build_message
 
 logger = logging.getLogger(__name__)
 MessageTarget = namedtuple(
-    "MessageTarget",
-    "target_type, target_name, message_id",
-    defaults=(None, )
+    "MessageTarget", "target_type, target_name, message_id", defaults=(None,)
 )
 
 
@@ -21,33 +19,32 @@ class Issue:
 
     @staticmethod
     def _add_prefix(issue_id: str, prefix: str):
-        """ Добавляет префикс для issue_id """
+        """Добавляет префикс для issue_id"""
         return prefix + issue_id
 
     @staticmethod
     def _is_resolved(zabbix_event_status: str):
-        """ Проверяют статус issue. Issue - событие в Zabbix """
-        return True if zabbix_event_status.upper() == 'RESOLVED' else False
+        """Проверяют статус issue. Issue - событие в Zabbix"""
+        return True if zabbix_event_status.upper() == "RESOLVED" else False
 
 
 class TelegramMessage:
-
     def __init__(
-            self,
-            _id: str,
-            cmd: str,
-            sender_name: str,
-            *,
-            target: MessageTarget,
-            subject: str = "",
-            text: str = "",
-            images: Optional[List[str]] = None,
-            document: Optional[dict] = None,
-            issue: Optional[Issue] = None,
-            commands: Optional[Union[str, dict]] = None,
-            replies: Optional[Iterable] = None,
-            buttons: Optional[List[dict]] = None,
-            inline_edit_button: bool = False,
+        self,
+        _id: str,
+        cmd: str,
+        sender_name: str,
+        *,
+        target: MessageTarget,
+        subject: str = "",
+        text: str = "",
+        images: Optional[List[str]] = None,
+        document: Optional[dict] = None,
+        issue: Optional[Issue] = None,
+        commands: Optional[Union[str, dict]] = None,
+        replies: Optional[Iterable] = None,
+        buttons: Optional[List[dict]] = None,
+        inline_edit_button: bool = False,
     ):
         """
         :param _id:                 id команды, инициирующей отправку сообщения
@@ -121,24 +118,24 @@ class TelegramMessage:
 
         if self._commands:
             # Introduce
-            payload['commands'] = self._commands
+            payload["commands"] = self._commands
 
         if self._images:
             if len(self._images) == 1:
-                payload['image'] = self._images[0]
+                payload["image"] = self._images[0]
             else:
                 # Если изображений много - шлем их отдельными сообщениями
                 # со ссылкой на первое сообщение (с текстом)
                 replies = [{"image": image} for image in self._images]
-                payload['replies'] = replies
+                payload["replies"] = replies
         elif self._replies:
-            payload['replies'] = [{"message": message} for message in self._replies]
+            payload["replies"] = [{"message": message} for message in self._replies]
 
         if self._document:
-            payload['document'] = self._document
+            payload["document"] = self._document
 
         if self._issue:
-            payload['issue'] = {
+            payload["issue"] = {
                 "issue_id": self._issue.id_,
                 "resolved": self._issue.resolved,
             }

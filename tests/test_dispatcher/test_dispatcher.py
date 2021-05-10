@@ -1,15 +1,19 @@
 import pytest
 from typing import Type
 
-from cba.commands import WrongCommand, NotEnoughArguments, WrongArguments, \
-    BadJSONTemplateCommand, InternalError
+from cba.commands import (
+    WrongCommand,
+    NotEnoughArguments,
+    WrongArguments,
+    BadJSONTemplateCommand,
+    InternalError,
+)
 from cba.dispatcher import CommandsDispatcher, ClientInfo, BaseDispatcherEvent, Introduce
 from cba.exceptions import BadCommandTemplateException
 from testing.unitests.test_dispatcher.conftest import *
 
 
 class TestDispatcher:
-
     def test_set_publishers(self, test_publisher):
         d = CommandsDispatcher()
         d.set_publishers([test_publisher, test_publisher])
@@ -18,20 +22,21 @@ class TestDispatcher:
     def test_set_publisher(self, test_publisher):
         d = CommandsDispatcher()
         d.set_publishers(test_publisher)
-        assert d.publishers == [test_publisher, ]
+        assert d.publishers == [
+            test_publisher,
+        ]
 
     def test_introduce(self):
         d = CommandsDispatcher()
-        d.introduce(ClientInfo(
-            name="test"
-        ))
+        d.introduce(ClientInfo(name="test"))
         assert d.client_info.name == "test"
 
     def test_register_callable_command(self):
         d = CommandsDispatcher()
 
         @d.register_callable_command
-        class Cmd(BaseCommand): ...
+        class Cmd(BaseCommand):
+            ...
 
         assert Cmd in d.callable_commands
 
@@ -39,7 +44,8 @@ class TestDispatcher:
         d = CommandsDispatcher()
 
         @d.register_service_command
-        class Cmd(BaseCommand): ...
+        class Cmd(BaseCommand):
+            ...
 
         assert Cmd in d.service_commands
 
@@ -58,7 +64,9 @@ class TestDispatcher:
         cmd_kwargs, event = get_event_and_cmd_kwargs(event_with_not_enough_args)
         cmd = dispatcher._get_command(event.command, event.behavior, **cmd_kwargs)
         assert isinstance(cmd, NotEnoughArguments)
-        assert cmd.missing_args == ["arg2", ]
+        assert cmd.missing_args == [
+            "arg2",
+        ]
 
     def test_get_commands_not_valid(self):
         cmd_kwargs, event = get_event_and_cmd_kwargs(event_with_not_valid_args)
