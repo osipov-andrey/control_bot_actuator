@@ -84,7 +84,7 @@ class TestBaseCommandRegularMethods:
     @pytest.mark.asyncio
     async def test_send_message(self, test_cmd_instance, mocker):
         images = ["image1", "image2", "image3"]
-        mocker.patch("src.publishers.HTTPPublisher.publish_message")
+        mocker.patch("cba.publishers.HTTPPublisher.publish_message")
         target = MessageTarget("test", "test")
         message_kwargs = dict(subject="subject", text="text", images=images)
 
@@ -97,7 +97,7 @@ class TestBaseCommandRegularMethods:
 
     @pytest.mark.asyncio
     async def test_send_message_without_target(self, test_cmd_instance, mocker):
-        mocker.patch("src.publishers.HTTPPublisher.publish_message")
+        mocker.patch("cba.publishers.HTTPPublisher.publish_message")
         spy = mocker.spy(HTTPPublisher, "publish_message")
         await test_cmd_instance.send_message(text="text")
         message_obj = spy.await_args.args[0]

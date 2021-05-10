@@ -5,7 +5,7 @@ import json
 
 from abc import ABC, abstractmethod
 
-from . import exceptions
+from cba import exceptions
 from cba.messages import TelegramMessage
 
 

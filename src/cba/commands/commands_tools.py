@@ -1,8 +1,7 @@
 import pathlib
 import json
 
-from .. import exceptions
-
+from cba import exceptions
 
 TEMPLATE_DIR = "feedback_templates"  # Папка с шаблонами в пользовательской программе
 

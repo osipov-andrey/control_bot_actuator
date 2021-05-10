@@ -10,7 +10,7 @@ from cba.commands import (
 )
 from cba.dispatcher import CommandsDispatcher, ClientInfo, BaseDispatcherEvent, Introduce
 from cba.exceptions import BadCommandTemplateException
-from testing.unitests.test_dispatcher.conftest import *
+from conftest import *
 
 
 class TestDispatcher:

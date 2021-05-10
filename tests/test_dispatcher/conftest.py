@@ -1,3 +1,6 @@
+import sys
+
+from pathlib import Path
 from typing import Tuple
 
 import pytest
@@ -6,8 +9,12 @@ from cba.dispatcher import BaseDispatcherEvent, Introduce
 from cba.helpers import ClientInfo
 from cba.publishers import HTTPPublisher
 
-from testing.test_service.test_commands import *
+# from control_bot_actuator.examples.demo.test_commands import *
 
+path_to_cmds = Path(__file__).parent.parent.parent.absolute().joinpath("examples").joinpath("demo")
+sys.path.append(str(path_to_cmds))
+
+from test_commands import *
 
 dispatcher.set_publishers(HTTPPublisher(url="", headers={}))
 dispatcher.introduce(ClientInfo("test"))
