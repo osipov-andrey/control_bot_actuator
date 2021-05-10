@@ -1,8 +1,8 @@
 import logging
 import yaml
 
-from cba import Actuator
-from cba.publishers import HTTPPublisher
+from cba.actuator import Actuator
+from cba.publishers import RabbitPublisher
 from cba.consumers import SSEConsumer
 
 import test_commands
@@ -23,8 +23,7 @@ VERBOSE_NAME = config["VERBOSE_NAME"]
 SSE_URL = config["SSE_URL"].format(NAME)
 
 
-# publisher = RabbitPublisher(**config["rabbit"])
-publisher = HTTPPublisher(**config["http"], headers={})
+publisher = RabbitPublisher(**config["rabbit"])
 
 consumer = SSEConsumer(SSE_URL)
 
