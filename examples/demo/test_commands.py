@@ -156,7 +156,7 @@ class TestHumanCallableCommandWithInlineButtons(BaseCommand):
         self.add_inline_button(InlineButtonForEdit, "Try me, change me")
         await self.send_message(
             subject="Кнопки под сообщением, 3 штуки, вызываемые",
-            buttons=self.inline_buttons,
+            reply_markup=self.inline_buttons,
         )
 
 

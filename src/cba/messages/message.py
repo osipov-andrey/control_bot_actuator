@@ -43,7 +43,7 @@ class TelegramMessage:
         issue: Optional[Issue] = None,
         commands: Optional[Union[str, dict]] = None,
         replies: Optional[Iterable] = None,
-        buttons: Optional[List[dict]] = None,
+        reply_markup: Optional[List[dict]] = None,
         inline_edit_button: bool = False,
     ):
         """
@@ -85,7 +85,7 @@ class TelegramMessage:
                             "cmd2": ...
                         }
         :param replies:             Сообщения, которые выведутся в телеграме как ответы на основное
-        :param buttons:             Описание inline-buttons под сообщением
+        :param reply_markup:        Описание inline-buttons под сообщением
         """
         self._id = _id
         self.cmd = cmd
@@ -96,7 +96,7 @@ class TelegramMessage:
         self._issue = issue
         self._commands = commands
         self._replies = replies
-        self._buttons = buttons
+        self._reply_markup = reply_markup
         self._target = target
         self._inline_edit_button = inline_edit_button
         self._text = self._build_message(subject, text)
@@ -113,7 +113,7 @@ class TelegramMessage:
         payload = {
             "cmd": self.cmd,
             "id": self._id,
-            "message": self._text,
+            "text": self._text,
         }
 
         if self._commands:
@@ -129,7 +129,7 @@ class TelegramMessage:
                 replies = [{"image": image} for image in self._images]
                 payload["replies"] = replies
         elif self._replies:
-            payload["replies"] = [{"message": message} for message in self._replies]
+            payload["replies"] = [{"text": text} for text in self._replies]
 
         if self._document:
             payload["document"] = self._document
@@ -140,8 +140,8 @@ class TelegramMessage:
                 "resolved": self._issue.resolved,
             }
 
-        if self._buttons:
-            payload["buttons"] = self._buttons
+        if self._reply_markup:
+            payload["reply_markup"] = self._reply_markup
 
         target = self._target._asdict()
         if not self._inline_edit_button:

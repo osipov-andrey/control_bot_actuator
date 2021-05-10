@@ -2,14 +2,6 @@ from abc import ABC, abstractmethod
 from typing import Optional, List, Union
 
 
-__all__ = [
-    "String",
-    "Integer",
-    "ListArg",
-    "MyUser",
-]
-
-
 class Arg(ABC):
     """Определяет один аргумент команды"""
 
@@ -46,13 +38,15 @@ class Arg(ABC):
         self._allowed = allowed
         if allow_options:
             self._allowed = options
+        self._extra_info = dict()
 
     @property
     def arg_info(self) -> dict:
         arg_info = {
             "description": self._build_description(),
-            "schema": self._build_schema(),
+            "arg_schema": self._build_schema(),
         }
+        arg_info.update(self._extra_info)
         if self._options:
             arg_info["options"] = self._options
         return arg_info
@@ -130,7 +124,39 @@ class ListArg(Arg):
 class MyUser(Integer):
     """ID пользователя телеграм, у которого есть доступ к командам клиента"""
 
-    def _create_schema(self) -> dict:
-        schema = super(MyUser, self)._create_schema()
-        schema["is_client"] = True
-        return schema
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._extra_info = dict(is_granter=True)
+
+
+class Actuator(String):
+    """Актуатор бота"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._extra_info = dict(is_actuator=True)
+
+
+class Granter(MyUser):
+    """ID пользователя с правами на актуатор"""
+
+    # TODO: повтор!
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._extra_info = dict(is_granter=True)
+
+
+class Channel(String):
+    """Канал бота"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._extra_info = dict(is_channel=True)
+
+
+class Subscriber(MyUser):
+    """Подписчик канала"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._extra_info = dict(is_subscriber=True)

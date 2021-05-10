@@ -27,7 +27,7 @@ class TestMessage:
         expected_result = f"<i><b>{SENDER_NAME}\nlol\n</b></i>kek"
         message = get_message(text="kek", subject="lol")
         assert message._text == expected_result
-        assert message.payload["message"] == expected_result
+        assert message.payload["text"] == expected_result
 
     def test_check_commands(self):
         commands = {"cmd": "cmd_description"}
@@ -49,7 +49,7 @@ class TestMessage:
     def test_check_replies(self):
         replies = ["message1", "message2"]
         message = get_message(replies=replies)
-        assert message.payload["replies"] == [{"message": message} for message in replies]
+        assert message.payload["replies"] == [{"text": message} for message in replies]
 
     def test_check_replies_and_images(self):
         """Replies should only contain images or only Replies"""
@@ -82,6 +82,6 @@ class TestMessage:
         assert message.payload["target"] == target._asdict()
 
     def test_check_buttons(self):
-        buttons = {"button1": "action1", "button2": "action2"}
-        message = get_message(buttons=buttons)
-        assert message.payload["buttons"] == buttons
+        reply_markup = {"button1": "action1", "button2": "action2"}
+        message = get_message(reply_markup=reply_markup)
+        assert message.payload["reply_markup"] == reply_markup
